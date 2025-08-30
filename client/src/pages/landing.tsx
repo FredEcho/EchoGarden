@@ -20,9 +20,10 @@ export default function Landing() {
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
               <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-                <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
               </svg>
             </div>
             <div>
@@ -41,13 +42,14 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="gradient-cyan-blue px-4 py-16 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 floating-animation">
             <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
-              <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
             </svg>
           </div>
           
@@ -140,11 +142,12 @@ export default function Landing() {
       {/* CTA Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="w-20 h-20 gradient-cyan-blue rounded-full flex items-center justify-center mx-auto mb-8 pulse-grow">
+          <div className="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 pulse-grow">
             <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
-              <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
             </svg>
           </div>
           
@@ -174,9 +177,10 @@ export default function Landing() {
           <div className="flex items-center justify-center space-x-3 mb-6">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-                <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
               </svg>
             </div>
             <h4 className="text-2xl font-bold text-white">EchoGarden</h4>
