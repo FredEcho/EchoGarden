@@ -20,9 +20,8 @@ export default function Landing() {
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
               <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
-                <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="18" r="2" fill="currentColor"/>
               </svg>
             </div>
             <div>
@@ -45,9 +44,8 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 floating-animation">
             <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
-              <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-              <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="12" cy="18" r="2" fill="currentColor"/>
             </svg>
           </div>
           
@@ -142,9 +140,8 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-20 h-20 gradient-cyan-blue rounded-full flex items-center justify-center mx-auto mb-8 pulse-grow">
             <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
-              <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-              <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="12" cy="18" r="2" fill="currentColor"/>
             </svg>
           </div>
           
@@ -174,9 +171,8 @@ export default function Landing() {
           <div className="flex items-center justify-center space-x-3 mb-6">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
-                <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="18" r="2" fill="currentColor"/>
               </svg>
             </div>
             <h4 className="text-2xl font-bold text-white">EchoGarden</h4>
