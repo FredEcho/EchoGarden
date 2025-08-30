@@ -18,8 +18,12 @@ export default function Landing() {
       <header className="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center backdrop-blur-sm">
-              <div className="w-4 h-4 bg-white rounded-sm"></div>
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
+                <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
+                <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+              </svg>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white" data-testid="app-title">EchoGarden</h1>
@@ -39,8 +43,12 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="gradient-cyan-blue px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="w-16 h-16 gradient-purple-orange rounded-2xl flex items-center justify-center mx-auto mb-8 floating-animation">
-            <div className="w-8 h-8 bg-white rounded-lg"></div>
+          <div className="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 floating-animation">
+            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
+              <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
           </div>
           
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
@@ -132,8 +140,12 @@ export default function Landing() {
       {/* CTA Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="w-16 h-16 gradient-cyan-blue rounded-2xl flex items-center justify-center mx-auto mb-8 pulse-grow">
-            <div className="w-8 h-8 bg-white rounded-lg"></div>
+          <div className="w-20 h-20 gradient-cyan-blue rounded-full flex items-center justify-center mx-auto mb-8 pulse-grow">
+            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
+              <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
           </div>
           
           <h3 className="text-4xl font-bold gradient-text-purple-orange mb-6">
@@ -160,8 +172,12 @@ export default function Landing() {
       <footer className="bg-green-600 px-4 py-12 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-white rounded-sm"></div>
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
+                <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
+                <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+              </svg>
             </div>
             <h4 className="text-2xl font-bold text-white">EchoGarden</h4>
           </div>
