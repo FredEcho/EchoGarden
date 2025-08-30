@@ -20,9 +20,9 @@ export default function Landing() {
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
               <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
-                <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
-                <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+                <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
+                <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
               </svg>
             </div>
             <div>
@@ -45,9 +45,9 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 floating-animation">
             <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
-              <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
-              <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
+              <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
             </svg>
           </div>
           
@@ -142,9 +142,9 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-20 h-20 gradient-cyan-blue rounded-full flex items-center justify-center mx-auto mb-8 pulse-grow">
             <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
-              <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
-              <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
+              <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
             </svg>
           </div>
           
@@ -174,9 +174,9 @@ export default function Landing() {
           <div className="flex items-center justify-center space-x-3 mb-6">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C12 2 8 6 8 12C8 16 10 18 12 18C14 18 16 16 16 12C16 6 12 2 12 2Z" />
-                <path d="M8 18C8 18 6 16 6 12" stroke="currentColor" strokeWidth="2" fill="none" />
-                <path d="M16 18C16 18 18 16 18 12" stroke="currentColor" strokeWidth="2" fill="none" />
+                <path d="M12 20c0-1.5-2-3-2-5s2-3.5 2-5c0 1.5 2 3 2 5s-2 3.5-2 5z"/>
+                <path d="M8 16c1-1 2-2 4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                <path d="M16 16c-1-1-2-2-4-2" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
               </svg>
             </div>
             <h4 className="text-2xl font-bold text-white">EchoGarden</h4>
