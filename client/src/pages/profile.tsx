@@ -50,9 +50,10 @@ export default function Profile() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="18" r="2" fill="currentColor"/>
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
+                <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
               </svg>
             </div>
             <div>

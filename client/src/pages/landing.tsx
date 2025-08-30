@@ -19,9 +19,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="18" r="2" fill="currentColor"/>
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
+                <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
               </svg>
             </div>
             <div>
@@ -43,9 +44,10 @@ export default function Landing() {
       <section className="gradient-cyan-blue px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 floating-animation">
-            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              <circle cx="12" cy="18" r="2" fill="currentColor"/>
+            <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
+              <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
             </svg>
           </div>
           
@@ -139,9 +141,10 @@ export default function Landing() {
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-20 h-20 gradient-cyan-blue rounded-full flex items-center justify-center mx-auto mb-8 pulse-grow">
-            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              <circle cx="12" cy="18" r="2" fill="currentColor"/>
+            <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
+              <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+              <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
             </svg>
           </div>
           
@@ -170,9 +173,10 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex items-center justify-center space-x-3 mb-6">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 4v12M8 8c2-1 4-1 4 2M16 8c-2-1-4-1-4 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="18" r="2" fill="currentColor"/>
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
+                <path d="M12 20v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M8 14c2-2 4-1 4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M16 14c-2-2-4-1-4 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
               </svg>
             </div>
             <h4 className="text-2xl font-bold text-white">EchoGarden</h4>
