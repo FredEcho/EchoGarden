@@ -49,8 +49,8 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-4 floating-animation">
-            <span className="text-white text-2xl">🌱</span>
+          <div className="w-12 h-12 gradient-purple-orange rounded-2xl flex items-center justify-center mx-auto mb-4 floating-animation">
+            <div className="w-6 h-6 bg-white rounded-lg"></div>
           </div>
           <p className="text-muted-foreground">Loading your garden...</p>
         </div>
@@ -64,8 +64,8 @@ export default function Home() {
       <header className="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <span className="text-white text-xl">🌱</span>
+            <div className="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center backdrop-blur-sm">
+              <div className="w-4 h-4 bg-white rounded-sm"></div>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white" data-testid="app-title">EchoGarden</h1>

@@ -49,8 +49,8 @@ export default function Profile() {
       <header className="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <span className="text-white text-xl">🌱</span>
+            <div className="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center backdrop-blur-sm">
+              <div className="w-4 h-4 bg-white rounded-sm"></div>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white" data-testid="app-title">EchoGarden</h1>
