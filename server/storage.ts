@@ -386,9 +386,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   async markResponseHelpful(responseId: string, helpRequestId: string): Promise<void> {
+    // First get the current response to check if it's already marked as helpful
+    const [currentResponse] = await db
+      .select()
+      .from(helpResponses)
+      .where(eq(helpResponses.id, responseId));
+
+    if (!currentResponse) {
+      throw new Error('Response not found');
+    }
+
+    // If already marked as helpful, don't increment count again
+    if (currentResponse.isMarkedHelpful) {
+      return;
+    }
+
+    // Mark as helpful and increment the helpful count
     await db
       .update(helpResponses)
-      .set({ isMarkedHelpful: 1 })
+      .set({ 
+        isMarkedHelpful: 1,
+        helpfulCount: (currentResponse.helpfulCount || 0) + 1
+      })
       .where(eq(helpResponses.id, responseId));
 
     // Get the response to award XP to the helper
@@ -402,13 +421,20 @@ export class DatabaseStorage implements IStorage {
       await this.addXP(response.userId, XP_REWARDS.RESPONSE_MARKED_HELPFUL, 'Response marked as helpful');
       
       // Update total help provided count
-      await db
-        .update(users)
-        .set({ 
-          totalHelpProvided: sql`${users.totalHelpProvided} + 1`,
-          updatedAt: new Date().toISOString()
-        })
+      const [currentUser] = await db
+        .select({ totalHelpProvided: users.totalHelpProvided })
+        .from(users)
         .where(eq(users.id, response.userId));
+      
+      if (currentUser) {
+        await db
+          .update(users)
+          .set({ 
+            totalHelpProvided: (currentUser.totalHelpProvided || 0) + 1,
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq(users.id, response.userId));
+      }
 
       // Get the help request to determine the category
       const [helpRequest] = await db
@@ -442,7 +468,7 @@ export class DatabaseStorage implements IStorage {
         await this.updateGardenItem(gardenItem.id, {
           growth: newGrowth,
           type: newType,
-          isGrown: newGrowth >= 100,
+          isGrown: newGrowth >= 100 ? 1 : 0,
         });
       }
     }

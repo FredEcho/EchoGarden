@@ -133,7 +133,7 @@ export default function Home() {
                     🌱 Share Your Echo
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] overflow-y-auto">
                   <PostHelpForm onSuccess={() => {
                     refetchHelpRequests();
                     setIsDialogOpen(false);

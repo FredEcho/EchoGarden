@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCategories } from "@/hooks/useCategories";
@@ -26,7 +26,7 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { categories } = useCategories();
+  const { categories, isLoading, error } = useCategories();
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -144,14 +144,14 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+    <Card className="border-0 shadow-none">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center space-x-2 text-xl">
           <SproutIcon color="purple" />
           <span>Share Your Echo</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-0">
         <div>
           <label className="text-sm font-medium mb-2 block">What's your echo about?</label>
           <Input
@@ -164,18 +164,34 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
 
         <div>
           <label className="text-sm font-medium mb-2 block">Category</label>
-          <Select value={categoryId} onValueChange={setCategoryId}>
-            <SelectTrigger data-testid="select-category">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
+          {isLoading ? (
+            <div className="text-sm text-gray-500">Loading categories...</div>
+          ) : error ? (
+            <div className="text-sm text-red-500">Error loading categories: {error.message}</div>
+          ) : categories.length === 0 ? (
+            <div className="text-sm text-gray-500">No categories available</div>
+          ) : (
+            <select 
+              value={categoryId} 
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              data-testid="select-category"
+            >
+              <option value="">Select a category</option>
               {categories.map((category: any) => (
-                <SelectItem key={category.id} value={category.id} data-testid={`option-category-${category.id}`}>
+                <option key={category.id} value={category.id} data-testid={`option-category-${category.id}`}>
                   {category.name}
-                </SelectItem>
+                </option>
               ))}
-            </SelectContent>
-          </Select>
+            </select>
+          )}
+          {/* Debug info */}
+          <div className="text-xs text-gray-400 mt-1">
+            Debug: {categories.length} categories loaded, selected: {categoryId || 'none'}
+          </div>
+          <div className="text-xs text-gray-400 mt-1">
+            Categories data: {JSON.stringify(categories.slice(0, 2))}
+          </div>
         </div>
 
         <div>

@@ -20,6 +20,7 @@ interface Comment {
   content: string;
   createdAt: string;
   isMarkedHelpful: boolean;
+  helpfulCount: number; // Count of helpful marks
   user: {
     id: string;
     firstName?: string;
@@ -257,6 +258,11 @@ export function CommentSection({ helpRequestId, onCommentAdded }: CommentSection
                     >
                       <Heart className={`w-4 h-4 mr-1 ${comment.isMarkedHelpful ? 'fill-red-500 text-red-500' : ''}`} />
                       {comment.isMarkedHelpful ? 'Helpful' : 'Mark Helpful'}
+                      {comment.helpfulCount > 0 && (
+                        <span className="ml-1 text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
+                          {comment.helpfulCount}
+                        </span>
+                      )}
                     </Button>
                   </div>
                 </div>

@@ -65,6 +65,7 @@ export const helpResponses = sqliteTable("help_responses", {
   userId: text("user_id").notNull().references(() => users.id),
   content: text("content").notNull(),
   isMarkedHelpful: integer("is_marked_helpful").default(0),
+  helpfulCount: integer("helpful_count").default(0), // Count of helpful marks
   createdAt: text("created_at"),
 });
 
