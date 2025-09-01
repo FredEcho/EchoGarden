@@ -76,10 +76,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    const id = userData.id ?? nanoid();
+    const now = new Date().toISOString();
+    
     // For new user registration, we don't need upsert logic
     const [user] = await db
       .insert(users)
-      .values({ id: userData.id ?? nanoid(), ...userData })
+      .values({
+        id,
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        profileImageUrl: userData.profileImageUrl,
+        passwordHash: userData.passwordHash,
+        xp: userData.xp || 0,
+        level: userData.level || 1,
+        totalHelpProvided: userData.totalHelpProvided || 0,
+        totalHelpReceived: userData.totalHelpReceived || 0,
+        createdAt: now,
+        updatedAt: now
+      })
       .returning();
     return user;
   }
@@ -90,9 +106,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createCategory(category: InsertCategory): Promise<Category> {
+    const id = nanoid();
+    const now = new Date().toISOString();
+    
     const [newCategory] = await db
       .insert(categories)
-      .values({ id: nanoid(), ...category })
+      .values({
+        id,
+        name: category.name,
+        color: category.color,
+        createdAt: now
+      })
       .returning();
     return newCategory;
   }
@@ -191,24 +215,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createHelpRequest(request: InsertHelpRequest): Promise<HelpRequest> {
-    const id = nanoid();
-    const now = new Date().toISOString();
-    
-    // Use raw SQL for SQLite compatibility
-    if (process.env.DATABASE_URL?.startsWith('postgresql://')) {
-      // PostgreSQL version using Drizzle
-      const [newRequest] = await db
-        .insert(helpRequests)
-        .values({ 
-          id, 
-          ...request
-        })
-        .returning();
+    try {
+      console.log('🌱 Creating help request:', request);
       
-      await this.addXP(request.userId, XP_REWARDS.POST_HELP_REQUEST, 'Posted help request');
-      return newRequest;
-    } else {
-      // SQLite version - use Drizzle but with explicit field mapping
+      const id = nanoid();
+      const now = new Date().toISOString();
+      
+      // Create help request with explicit ID and timestamps
       const [newRequest] = await db
         .insert(helpRequests)
         .values({
@@ -218,13 +231,28 @@ export class DatabaseStorage implements IStorage {
           title: request.title,
           description: request.description,
           tags: request.tags || null,
-          isResolved: false
+          isResolved: 0,
+          createdAt: now,
+          updatedAt: now
         })
         .returning();
       
-      await this.addXP(request.userId, XP_REWARDS.POST_HELP_REQUEST, 'Posted help request');
+      console.log('✅ Help request created successfully:', newRequest.id);
+      
+      // Award XP for posting
+      try {
+        await this.addXP(request.userId, XP_REWARDS.POST_HELP_REQUEST, 'Posted help request');
+        console.log('🎯 XP awarded for help request');
+      } catch (xpError) {
+        console.error('⚠️ Failed to award XP:', xpError);
+        // Don't fail the request creation if XP fails
+      }
       
       return newRequest;
+    } catch (error) {
+      console.error('❌ Failed to create help request:', error);
+      console.error('Request data:', request);
+      throw error;
     }
   }
 
@@ -293,11 +321,18 @@ export class DatabaseStorage implements IStorage {
 
   // Help response operations
   async createHelpResponse(response: InsertHelpResponse): Promise<HelpResponse> {
+    const id = nanoid();
+    const now = new Date().toISOString();
+    
     const [newResponse] = await db
       .insert(helpResponses)
-      .values({ 
-        id: nanoid(), 
-        ...response
+      .values({
+        id,
+        helpRequestId: response.helpRequestId,
+        userId: response.userId,
+        content: response.content,
+        isMarkedHelpful: 0,
+        createdAt: now
       })
       .returning();
 
@@ -353,7 +388,7 @@ export class DatabaseStorage implements IStorage {
   async markResponseHelpful(responseId: string, helpRequestId: string): Promise<void> {
     await db
       .update(helpResponses)
-      .set({ isMarkedHelpful: true })
+      .set({ isMarkedHelpful: 1 })
       .where(eq(helpResponses.id, responseId));
 
     // Get the response to award XP to the helper
@@ -447,11 +482,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createGardenItem(item: InsertGardenItem): Promise<GardenItem> {
+    const id = nanoid();
+    const now = new Date().toISOString();
+    
     const [newItem] = await db
       .insert(gardenItems)
-      .values({ 
-        id: nanoid(), 
-        ...item
+      .values({
+        id,
+        userId: item.userId,
+        helpResponseId: item.helpResponseId,
+        type: item.type,
+        growth: item.growth || 0,
+        isGrown: item.isGrown || 0,
+        createdAt: now,
+        updatedAt: now
       })
       .returning();
     return newItem;
@@ -483,7 +527,7 @@ export class DatabaseStorage implements IStorage {
     const [gardensBloomin] = await db
       .select({ count: count() })
       .from(gardenItems)
-      .where(eq(gardenItems.isGrown, true));
+      .where(eq(gardenItems.isGrown, 1));
 
     return {
       activeGardeners: activeGardeners.count,

@@ -11,11 +11,29 @@ import { eq } from "drizzle-orm";
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   
-  // Temporarily use memory store for debugging
+  // Use PostgreSQL store if available, otherwise fall back to memory store
+  let store;
+  if (process.env.DATABASE_URL?.startsWith('postgresql://')) {
+    try {
+      const connectPg = require('connect-pg-simple');
+      const PostgresStore = connectPg(session);
+      store = new PostgresStore({
+        conObject: {
+          connectionString: process.env.DATABASE_URL,
+        },
+        tableName: 'sessions',
+        createTableIfMissing: true,
+      });
+    } catch (error) {
+      console.warn('PostgreSQL session store not available, using memory store:', error.message);
+    }
+  }
+  
   return session({
     secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
+    store,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -63,8 +81,12 @@ passport.serializeUser((user: any, cb) => cb(null, user.id));
 passport.deserializeUser(async (id: string, cb) => {
   try {
     const [user] = await db.select().from(users).where(eq(users.id, id));
+    if (!user) {
+      return cb(new Error('User not found'));
+    }
     cb(null, user);
   } catch (error) {
+    console.error('Deserialize user error:', error);
     cb(error);
   }
 });
@@ -149,7 +171,12 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user) {
+    // Ensure req.user has the necessary properties
+    if (!req.user.id) {
+      console.error("User object missing ID:", req.user);
+      return res.status(401).json({ message: "Invalid user session" });
+    }
     return next();
   }
   res.status(401).json({ message: "Unauthorized" });

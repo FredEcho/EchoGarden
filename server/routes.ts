@@ -11,20 +11,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Initialize default categories
   const initializeCategories = async () => {
-    const existingCategories = await storage.getCategories();
-    if (existingCategories.length === 0) {
-      const defaultCategories = [
-        { name: "Mental Health Support", color: "green" },
-        { name: "Study Help", color: "blue" },
-        { name: "Career Advice", color: "purple" },
-        { name: "Life Skills", color: "orange" },
-        { name: "Creative Feedback", color: "pink" },
-        { name: "Tech Support", color: "indigo" },
-      ];
+    try {
+      console.log('🌱 Initializing default categories...');
+      const existingCategories = await storage.getCategories();
+      console.log(`📋 Found ${existingCategories.length} existing categories`);
       
-      for (const category of defaultCategories) {
-        await storage.createCategory(category);
+      if (existingCategories.length === 0) {
+        console.log('🆕 No categories found, creating default ones...');
+        const defaultCategories = [
+          { name: "Mental Health Support", color: "green" },
+          { name: "Study Help", color: "blue" },
+          { name: "Career Advice", color: "purple" },
+          { name: "Life Skills", color: "orange" },
+          { name: "Creative Feedback", color: "pink" },
+          { name: "Tech Support", color: "indigo" },
+        ];
+        
+        for (const category of defaultCategories) {
+          try {
+            const created = await storage.createCategory(category);
+            console.log(`✅ Created category: ${created.name} (${created.id})`);
+          } catch (error) {
+            console.error(`❌ Failed to create category ${category.name}:`, error);
+          }
+        }
+        console.log('🎉 Category initialization completed');
+      } else {
+        console.log('✅ Categories already exist, skipping initialization');
+        existingCategories.forEach(cat => {
+          console.log(`  - ${cat.name} (${cat.id})`);
+        });
       }
+    } catch (error) {
+      console.error('💥 Category initialization failed:', error);
+      throw error;
     }
   };
   
@@ -105,7 +125,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/help-requests', isAuthenticated, async (req: any, res) => {
     try {
       console.log("Creating help request:", req.body);
+      
+      // Ensure user object exists and has required properties
+      if (!req.user || !req.user.id) {
+        console.error("User object missing or invalid:", req.user);
+        return res.status(401).json({ message: "Invalid user session" });
+      }
+      
       const userId = req.user.id;
+      console.log("User ID from session:", userId);
       
       const requestData = {
         ...req.body,
@@ -282,7 +310,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (item.growth < 100) {
           await storage.updateGardenItem(item.id, {
             growth: 100,
-            isGrown: true,
+            isGrown: 1,
           });
         }
       }
@@ -315,7 +343,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Resetting item:', item.id, 'from growth', item.growth, 'to 0');
         await storage.updateGardenItem(item.id, {
           growth: 0,
-          isGrown: false,
+          isGrown: 0,
         });
       }
       
@@ -366,7 +394,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Basic health check
       const health = {
         status: 'healthy',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
         uptime: process.uptime(),
         environment: process.env.NODE_ENV || 'development',
         version: process.env.npm_package_version || '1.0.0'
@@ -386,7 +414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(503).json({ 
         status: 'unhealthy',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
         error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
       });
     }

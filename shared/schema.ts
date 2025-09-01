@@ -1,27 +1,17 @@
 import { sql } from 'drizzle-orm';
 import {
   index,
-  pgTable,
+  sqliteTable,
   text,
   integer,
   real,
-  timestamp,
-  boolean,
-} from "drizzle-orm/pg-core";
-import {
-  sqliteTable,
-  sqliteText,
-  sqliteInteger,
-  sqliteReal,
-  sqliteTimestamp,
-  sqliteBoolean,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Session storage table for Replit Auth
-export const sessions = pgTable(
+export const sessions = sqliteTable(
   "sessions",
   {
     sid: text("sid").primaryKey(),
@@ -32,8 +22,8 @@ export const sessions = pgTable(
 );
 
 // User storage table
-export const users = pgTable("users", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey(),
   email: text("email").unique(),
   firstName: text("first_name"),
   lastName: text("last_name"),
@@ -43,62 +33,62 @@ export const users = pgTable("users", {
   level: integer("level").default(1), // User level
   totalHelpProvided: integer("total_help_provided").default(0), // Total helpful responses
   totalHelpReceived: integer("total_help_received").default(0), // Total help requests resolved
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: text("created_at"),
+  updatedAt: text("updated_at"),
 });
 
 // Help request categories
-export const categories = pgTable("categories", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+export const categories = sqliteTable("categories", {
+  id: text("id").primaryKey(),
   name: text("name").notNull().unique(),
   color: text("color").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at"),
 });
 
 // Help requests ("Echoes")
-export const helpRequests = pgTable("help_requests", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+export const helpRequests = sqliteTable("help_requests", {
+  id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id),
   categoryId: text("category_id").notNull().references(() => categories.id),
   title: text("title").notNull(),
   description: text("description").notNull(),
   tags: text("tags"),
-  isResolved: boolean("is_resolved").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  isResolved: integer("is_resolved").default(0),
+  createdAt: text("created_at"),
+  updatedAt: text("updated_at"),
 });
 
 // Help responses
-export const helpResponses = pgTable("help_responses", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+export const helpResponses = sqliteTable("help_responses", {
+  id: text("id").primaryKey(),
   helpRequestId: text("help_request_id").notNull().references(() => helpRequests.id),
   userId: text("user_id").notNull().references(() => users.id),
   content: text("content").notNull(),
-  isMarkedHelpful: boolean("is_marked_helpful").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
+  isMarkedHelpful: integer("is_marked_helpful").default(0),
+  createdAt: text("created_at"),
 });
 
 // Garden items (seeds, plants, etc.)
-export const gardenItems = pgTable("garden_items", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+export const gardenItems = sqliteTable("garden_items", {
+  id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id),
   helpResponseId: text("help_response_id").references(() => helpResponses.id),
   type: text("type").notNull(), // seed, sprout, plant, tree, flower
   growth: integer("growth").default(0), // 0-100
-  isGrown: boolean("is_grown").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  isGrown: integer("is_grown").default(0),
+  createdAt: text("created_at"),
+  updatedAt: text("updated_at"),
 });
 
 // Pay-it-forward tracking
-export const payItForward = pgTable("pay_it_forward", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+export const payItForward = sqliteTable("pay_it_forward", {
+  id: text("id").primaryKey(),
   helperId: text("helper_id").notNull().references(() => users.id),
   helpedUserId: text("helped_user_id").notNull().references(() => users.id),
   originalHelpRequestId: text("original_help_request_id").notNull().references(() => helpRequests.id),
   forwardHelpRequestId: text("forward_help_request_id").references(() => helpRequests.id),
-  isCompleted: boolean("is_completed").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
+  isCompleted: integer("is_completed").default(0),
+  createdAt: text("created_at"),
 });
 
 // Relations

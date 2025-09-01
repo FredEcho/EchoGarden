@@ -64,31 +64,40 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
       
       if (isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: "Session Expired",
+          description: "Your session has expired. Please log in again.",
           variant: "destructive",
         });
         setTimeout(() => {
           window.location.href = "/auth";
-        }, 500);
+        }, 1000);
         return;
       }
       
       // Show specific validation errors if available
-      if (error.response?.data?.errors) {
-        const errorMessages = error.response.data.errors.map((err: any) => err.message).join(', ');
-        toast({
-          title: "Validation Error",
-          description: errorMessages,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: error.response?.data?.message || "Failed to post your echo. Please try again.",
-          variant: "destructive",
-        });
+      if (error.message?.includes("400:")) {
+        try {
+          const errorData = JSON.parse(error.message.replace(/^\d+:\s*/, ''));
+          if (errorData.errors) {
+            const errorMessages = errorData.errors.map((err: any) => err.message).join(', ');
+            toast({
+              title: "Validation Error",
+              description: errorMessages,
+              variant: "destructive",
+            });
+            return;
+          }
+        } catch (e) {
+          // Fall through to generic error handling
+        }
       }
+      
+      // Generic error handling
+      toast({
+        title: "Error Posting Echo",
+        description: error.message || "Failed to post your echo. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 

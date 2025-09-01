@@ -77,11 +77,9 @@ CREATE TABLE IF NOT EXISTS help_requests (
   title TEXT NOT NULL,
   description TEXT NOT NULL,
   tags TEXT,
-  is_resolved INTEGER DEFAULT 0,
+  is_resolved BOOLEAN DEFAULT 0,
   created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+  updated_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS help_responses (
@@ -89,10 +87,8 @@ CREATE TABLE IF NOT EXISTS help_responses (
   help_request_id TEXT NOT NULL,
   user_id TEXT NOT NULL,
   content TEXT NOT NULL,
-  is_marked_helpful INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY(help_request_id) REFERENCES help_requests(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+  is_marked_helpful BOOLEAN DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS garden_items (
@@ -101,11 +97,9 @@ CREATE TABLE IF NOT EXISTS garden_items (
   help_response_id TEXT,
   type TEXT NOT NULL,
   growth INTEGER DEFAULT 0,
-  is_grown INTEGER DEFAULT 0,
+  is_grown BOOLEAN DEFAULT 0,
   created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  FOREIGN KEY(help_response_id) REFERENCES help_responses(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+  updated_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS pay_it_forward (
@@ -114,12 +108,8 @@ CREATE TABLE IF NOT EXISTS pay_it_forward (
   helped_user_id TEXT NOT NULL,
   original_help_request_id TEXT NOT NULL,
   forward_help_request_id TEXT,
-  is_completed INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY(helper_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  FOREIGN KEY(helped_user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  FOREIGN KEY(original_help_request_id) REFERENCES help_requests(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  FOREIGN KEY(forward_help_request_id) REFERENCES help_requests(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+  is_completed BOOLEAN DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now'))
 );
 `);
   } catch (e) {
