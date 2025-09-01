@@ -8,14 +8,18 @@ import { CategoryFilter } from "@/components/category-filter";
 import { PostHelpForm } from "@/components/post-help-form";
 import { GardenVisualization } from "@/components/garden-visualization";
 import { CommunityStats } from "@/components/community-stats";
-import { useQuery } from "@tanstack/react-query";
+import { useSearchHelpRequests } from "@/hooks/useSearchHelpRequests";
+import { SearchBar } from "@/components/search-bar";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Logo } from "@/components/ui/logo";
 
 export default function Home() {
   const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { isAuthenticated, isLoading, user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -26,23 +30,38 @@ export default function Home() {
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
+        window.location.href = "/auth";
       }, 500);
       return;
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: helpRequests = [], refetch: refetchHelpRequests } = useQuery({
-    queryKey: ["/api/help-requests", selectedCategory],
-    enabled: isAuthenticated,
-  });
+  const { helpRequests, refetch: refetchHelpRequests } = useSearchHelpRequests(selectedCategory, searchTerm);
 
-  const handleLogout = () => {
-    window.location.href = "/api/logout";
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+      window.location.href = "/";
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Logout error:", error);
+      }
+      window.location.href = "/";
+    }
   };
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
+  };
+
+  const handleSearch = (search: string, category: string) => {
+    setSearchTerm(search);
+    if (category !== selectedCategory) {
+      setSelectedCategory(category);
+    }
   };
 
   if (isLoading) {
@@ -67,35 +86,37 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-                <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white" data-testid="app-title">EchoGarden</h1>
-              <p className="text-white/80 text-sm">Welcome back, {user?.firstName || 'Gardener'}!</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link href="/profile">
-              <Button variant="ghost" className="text-white hover:bg-white/10" data-testid="link-profile">
-                🌿 My Garden
-              </Button>
+        <div className="max-w-7xl mx-auto">
+          {/* Top row with logo and navigation */}
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity duration-200">
+              <Logo size="md" showText={false} />
+              <div>
+                <h1 className="text-2xl font-bold text-white" data-testid="app-title">EchoGarden</h1>
+                <p className="text-white/80 text-sm">Welcome back, Gardener!</p>
+              </div>
             </Link>
-            <Button 
-              onClick={handleLogout}
-              variant="ghost"
-              className="text-white hover:bg-white/10"
-              data-testid="button-logout"
-            >
-              Logout
-            </Button>
+            
+            <div className="flex items-center space-x-4">
+              <SearchBar 
+                onSearch={handleSearch}
+                selectedCategory={selectedCategory}
+                className=""
+              />
+              <Link href="/profile">
+                <Button variant="ghost" className="text-white hover:bg-white/10" data-testid="link-profile">
+                  🌿 My Garden
+                </Button>
+              </Link>
+              <Button 
+                onClick={handleLogout}
+                variant="ghost"
+                className="text-white hover:bg-white/10"
+                data-testid="button-logout"
+              >
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -106,14 +127,17 @@ export default function Home() {
           <div className="lg:col-span-3 space-y-8">
             {/* Quick Actions */}
             <div className="flex flex-wrap gap-4">
-              <Dialog>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="gradient-purple-orange text-white" data-testid="button-post-help">
-                    📢 Ask for Help
+                    🌱 Share Your Echo
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
-                  <PostHelpForm onSuccess={() => refetchHelpRequests()} />
+                  <PostHelpForm onSuccess={() => {
+                    refetchHelpRequests();
+                    setIsDialogOpen(false);
+                  }} />
                 </DialogContent>
               </Dialog>
             </div>
@@ -124,14 +148,14 @@ export default function Home() {
               onCategoryChange={handleCategoryChange}
             />
 
-            {/* Help Requests Feed */}
+            {/* Echoes Feed */}
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold gradient-text-purple-orange" data-testid="text-help-requests-title">
-                  Recent Help Requests
+                  Recent Echoes
                 </h2>
                 <span className="text-sm text-muted-foreground" data-testid="text-requests-count">
-                  {helpRequests.length} requests
+                  {helpRequests.length} echoes
                 </span>
               </div>
 
@@ -140,8 +164,8 @@ export default function Home() {
                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-2xl">🌱</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">No help requests found</h3>
-                  <p className="text-muted-foreground">Be the first to ask for help or try changing the filter!</p>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">No echoes found</h3>
+                  <p className="text-muted-foreground">Be the first to share your echo or try changing the filter!</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -150,6 +174,7 @@ export default function Home() {
                       key={request.id} 
                       request={request}
                       onResponse={() => refetchHelpRequests()}
+                      onDelete={() => refetchHelpRequests()}
                     />
                   ))}
                 </div>

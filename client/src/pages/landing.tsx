@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useCategories } from "@/hooks/useCategories";
 import { CommunityStats } from "@/components/community-stats";
+import { Logo, SproutIcon } from "@/components/ui/logo";
+import { Link } from "wouter";
 
 export default function Landing() {
-  const { data: categories = [] } = useQuery({
-    queryKey: ["/api/categories"],
-  });
+  const { categories } = useCategories();
 
   const handleJoinGarden = () => {
-    window.location.href = "/api/login";
+    window.location.href = "/auth";
   };
 
   return (
@@ -17,20 +17,9 @@ export default function Landing() {
       {/* Header */}
       <header className="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-                <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white" data-testid="app-title">EchoGarden</h1>
-              <p className="text-white/80 text-sm">Grow kindness together</p>
-            </div>
-          </div>
+          <Link href="/" className="hover:opacity-90 transition-opacity duration-200">
+            <Logo size="md" />
+          </Link>
           <Button 
             onClick={handleJoinGarden}
             className="bg-white text-primary hover:bg-white/90"
@@ -44,18 +33,16 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 floating-animation">
-            <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
-              <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-            </svg>
+          {/* Large centered logo */}
+          <div className="flex justify-center mb-8">
+            <Link href="/" className="hover:opacity-90 transition-opacity duration-200">
+              <Logo size="lg" showText={false} />
+            </Link>
           </div>
           
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 flex items-center justify-center">
             Plant Seeds of Kindness
-            <span className="block">🌿</span>
+            <SproutIcon color="orange" className="ml-2" />
           </h2>
           
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -174,16 +161,8 @@ export default function Landing() {
       {/* Footer */}
       <footer className="bg-green-600 px-4 py-12 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-                <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <h4 className="text-2xl font-bold text-white">EchoGarden</h4>
+          <div className="flex items-center justify-center mb-6">
+            <Logo size="md" />
           </div>
           
           <p className="text-white/80 mb-8 max-w-md mx-auto">

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useCommunityStats } from "@/hooks/useCommunityStats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -7,9 +7,7 @@ interface CommunityStatsProps {
 }
 
 export function CommunityStats({ compact = false }: CommunityStatsProps) {
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["/api/stats"],
-  });
+  const { stats, isLoading } = useCommunityStats();
 
   if (isLoading) {
     return (

@@ -1,14 +1,21 @@
 import { sql } from 'drizzle-orm';
 import {
   index,
-  jsonb,
   pgTable,
-  timestamp,
-  varchar,
   text,
   integer,
+  real,
+  timestamp,
   boolean,
 } from "drizzle-orm/pg-core";
+import {
+  sqliteTable,
+  sqliteText,
+  sqliteInteger,
+  sqliteReal,
+  sqliteTimestamp,
+  sqliteBoolean,
+} from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -17,40 +24,45 @@ import { z } from "zod";
 export const sessions = pgTable(
   "sessions",
   {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
+    sid: text("sid").primaryKey(),
+    sess: text("sess").notNull(),
+    expire: integer("expire").notNull(),
   },
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// User storage table for Replit Auth
+// User storage table
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: text("email").unique(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  profileImageUrl: text("profile_image_url"),
+  passwordHash: text("password_hash"), // For local authentication
+  xp: integer("xp").default(0), // Experience points
+  level: integer("level").default(1), // User level
+  totalHelpProvided: integer("total_help_provided").default(0), // Total helpful responses
+  totalHelpReceived: integer("total_help_received").default(0), // Total help requests resolved
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Help request categories
 export const categories = pgTable("categories", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: varchar("name").notNull().unique(),
-  color: varchar("color").notNull(),
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull().unique(),
+  color: text("color").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Help requests ("Echoes")
 export const helpRequests = pgTable("help_requests", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id),
-  categoryId: varchar("category_id").notNull().references(() => categories.id),
-  title: varchar("title").notNull(),
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: text("user_id").notNull().references(() => users.id),
+  categoryId: text("category_id").notNull().references(() => categories.id),
+  title: text("title").notNull(),
   description: text("description").notNull(),
-  tags: text("tags").array(),
+  tags: text("tags"),
   isResolved: boolean("is_resolved").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -58,9 +70,9 @@ export const helpRequests = pgTable("help_requests", {
 
 // Help responses
 export const helpResponses = pgTable("help_responses", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  helpRequestId: varchar("help_request_id").notNull().references(() => helpRequests.id),
-  userId: varchar("user_id").notNull().references(() => users.id),
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  helpRequestId: text("help_request_id").notNull().references(() => helpRequests.id),
+  userId: text("user_id").notNull().references(() => users.id),
   content: text("content").notNull(),
   isMarkedHelpful: boolean("is_marked_helpful").default(false),
   createdAt: timestamp("created_at").defaultNow(),
@@ -68,10 +80,10 @@ export const helpResponses = pgTable("help_responses", {
 
 // Garden items (seeds, plants, etc.)
 export const gardenItems = pgTable("garden_items", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id),
-  helpResponseId: varchar("help_response_id").references(() => helpResponses.id),
-  type: varchar("type").notNull(), // seed, sprout, plant, tree, flower
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: text("user_id").notNull().references(() => users.id),
+  helpResponseId: text("help_response_id").references(() => helpResponses.id),
+  type: text("type").notNull(), // seed, sprout, plant, tree, flower
   growth: integer("growth").default(0), // 0-100
   isGrown: boolean("is_grown").default(false),
   createdAt: timestamp("created_at").defaultNow(),
@@ -80,11 +92,11 @@ export const gardenItems = pgTable("garden_items", {
 
 // Pay-it-forward tracking
 export const payItForward = pgTable("pay_it_forward", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  helperId: varchar("helper_id").notNull().references(() => users.id),
-  helpedUserId: varchar("helped_user_id").notNull().references(() => users.id),
-  originalHelpRequestId: varchar("original_help_request_id").notNull().references(() => helpRequests.id),
-  forwardHelpRequestId: varchar("forward_help_request_id").references(() => helpRequests.id),
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+  helperId: text("helper_id").notNull().references(() => users.id),
+  helpedUserId: text("helped_user_id").notNull().references(() => users.id),
+  originalHelpRequestId: text("original_help_request_id").notNull().references(() => helpRequests.id),
+  forwardHelpRequestId: text("forward_help_request_id").references(() => helpRequests.id),
   isCompleted: boolean("is_completed").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useCategories } from "@/hooks/useCategories";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -8,9 +8,7 @@ interface CategoryFilterProps {
 }
 
 export function CategoryFilter({ selectedCategory, onCategoryChange }: CategoryFilterProps) {
-  const { data: categories = [] } = useQuery({
-    queryKey: ["/api/categories"],
-  });
+  const { categories } = useCategories();
 
   const getCategoryColor = (categoryName: string) => {
     const colors: { [key: string]: string } = {
@@ -26,7 +24,7 @@ export function CategoryFilter({ selectedCategory, onCategoryChange }: CategoryF
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Filter by Category</h3>
+      <h3 className="text-lg font-semibold">Filter Echoes by Category</h3>
       <div className="flex flex-wrap gap-2">
         <Button
           variant={selectedCategory === "" ? "default" : "outline"}

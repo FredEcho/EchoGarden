@@ -18,7 +18,9 @@ import {
   type PayItForward,
 } from "@shared/schema";
 import { db } from "./db";
+import { nanoid } from "nanoid";
 import { eq, desc, count, and, sql } from "drizzle-orm";
+import { XP_REWARDS, calculateLevelInfo } from "@shared/leveling";
 
 export interface IStorage {
   // User operations (mandatory for Replit Auth)
@@ -30,7 +32,7 @@ export interface IStorage {
   createCategory(category: InsertCategory): Promise<Category>;
   
   // Help request operations
-  getHelpRequests(categoryId?: string): Promise<(HelpRequest & { 
+  getHelpRequests(categoryId?: string, searchQuery?: string): Promise<(HelpRequest & { 
     user: User; 
     category: Category; 
     responseCount: number; 
@@ -43,6 +45,7 @@ export interface IStorage {
   }) | undefined>;
   createHelpRequest(request: InsertHelpRequest): Promise<HelpRequest>;
   updateHelpRequest(id: string, updates: Partial<InsertHelpRequest>): Promise<HelpRequest>;
+  deleteHelpRequest(id: string, userId: string): Promise<void>;
   
   // Help response operations
   createHelpResponse(response: InsertHelpResponse): Promise<HelpResponse>;
@@ -52,6 +55,10 @@ export interface IStorage {
   getUserGarden(userId: string): Promise<GardenItem[]>;
   createGardenItem(item: InsertGardenItem): Promise<GardenItem>;
   updateGardenItem(id: string, updates: Partial<InsertGardenItem>): Promise<GardenItem>;
+  
+  // XP and Leveling operations
+  addXP(userId: string, xpAmount: number, reason: string): Promise<{ newXP: number; newLevel: number; leveledUp: boolean }>;
+  getUserStats(userId: string): Promise<{ xp: number; level: number; totalHelpProvided: number; totalHelpReceived: number }>;
   
   // Community stats
   getCommunityStats(): Promise<{
@@ -69,16 +76,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    // For new user registration, we don't need upsert logic
     const [user] = await db
       .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
+      .values({ id: userData.id ?? nanoid(), ...userData })
       .returning();
     return user;
   }
@@ -91,19 +92,19 @@ export class DatabaseStorage implements IStorage {
   async createCategory(category: InsertCategory): Promise<Category> {
     const [newCategory] = await db
       .insert(categories)
-      .values(category)
+      .values({ id: nanoid(), ...category })
       .returning();
     return newCategory;
   }
 
   // Help request operations
-  async getHelpRequests(categoryId?: string): Promise<(HelpRequest & { 
+  async getHelpRequests(categoryId?: string, searchQuery?: string): Promise<(HelpRequest & { 
     user: User; 
     category: Category; 
     responseCount: number; 
     viewCount: number;
   })[]> {
-    const query = db
+    let query = db
       .select({
         id: helpRequests.id,
         userId: helpRequests.userId,
@@ -117,7 +118,7 @@ export class DatabaseStorage implements IStorage {
         user: users,
         category: categories,
         responseCount: count(helpResponses.id),
-        viewCount: sql<number>`CAST(random() * 100 + 10 AS INTEGER)`, // Placeholder for view count
+        viewCount: sql<number>`0`, // Cross-dialect safe placeholder for view count
       })
       .from(helpRequests)
       .leftJoin(users, eq(helpRequests.userId, users.id))
@@ -126,8 +127,27 @@ export class DatabaseStorage implements IStorage {
       .groupBy(helpRequests.id, users.id, categories.id)
       .orderBy(desc(helpRequests.createdAt));
 
+    // Build where conditions
+    const conditions = [];
+    
     if (categoryId) {
-      query.where(eq(helpRequests.categoryId, categoryId));
+      conditions.push(eq(helpRequests.categoryId, categoryId));
+    }
+    
+    if (searchQuery && searchQuery.trim()) {
+      const searchTerm = `%${searchQuery.trim().toLowerCase()}%`;
+      conditions.push(
+        sql`(
+          LOWER(${helpRequests.title}) LIKE ${searchTerm} OR 
+          LOWER(${helpRequests.description}) LIKE ${searchTerm} OR 
+          LOWER(${helpRequests.tags}) LIKE ${searchTerm} OR
+          LOWER(${categories.name}) LIKE ${searchTerm}
+        )`
+      );
+    }
+    
+    if (conditions.length > 0) {
+      return await query.where(and(...conditions));
     }
 
     return await query;
@@ -164,41 +184,166 @@ export class DatabaseStorage implements IStorage {
 
     return {
       ...request.help_requests,
-      user: request.users!,
-      category: request.categories!,
+      user: request.users || null,
+      category: request.categories || null,
       responses,
     };
   }
 
   async createHelpRequest(request: InsertHelpRequest): Promise<HelpRequest> {
-    const [newRequest] = await db
-      .insert(helpRequests)
-      .values(request)
-      .returning();
-    return newRequest;
+    const id = nanoid();
+    const now = new Date().toISOString();
+    
+    // Use raw SQL for SQLite compatibility
+    if (process.env.DATABASE_URL?.startsWith('postgresql://')) {
+      // PostgreSQL version using Drizzle
+      const [newRequest] = await db
+        .insert(helpRequests)
+        .values({ 
+          id, 
+          ...request
+        })
+        .returning();
+      
+      await this.addXP(request.userId, XP_REWARDS.POST_HELP_REQUEST, 'Posted help request');
+      return newRequest;
+    } else {
+      // SQLite version - use Drizzle but with explicit field mapping
+      const [newRequest] = await db
+        .insert(helpRequests)
+        .values({
+          id,
+          userId: request.userId,
+          categoryId: request.categoryId,
+          title: request.title,
+          description: request.description,
+          tags: request.tags || null,
+          isResolved: false
+        })
+        .returning();
+      
+      await this.addXP(request.userId, XP_REWARDS.POST_HELP_REQUEST, 'Posted help request');
+      
+      return newRequest;
+    }
   }
 
   async updateHelpRequest(id: string, updates: Partial<InsertHelpRequest>): Promise<HelpRequest> {
     const [updated] = await db
       .update(helpRequests)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({ ...updates, updatedAt: new Date().toISOString() })
       .where(eq(helpRequests.id, id))
       .returning();
     return updated;
+  }
+
+  async deleteHelpRequest(id: string, userId: string): Promise<void> {
+    console.log("Storage: Deleting help request", { id, userId });
+    
+    // First check if the help request belongs to the user
+    const [request] = await db
+      .select()
+      .from(helpRequests)
+      .where(eq(helpRequests.id, id));
+
+    console.log("Storage: Found request", request);
+
+    if (!request) {
+      throw new Error("Help request not found");
+    }
+
+    if (request.userId !== userId) {
+      throw new Error("Unauthorized: You can only delete your own help requests");
+    }
+
+    console.log("Storage: Authorization passed, getting responses...");
+
+    // Get all responses for this help request
+    const responses = await db
+      .select()
+      .from(helpResponses)
+      .where(eq(helpResponses.helpRequestId, id));
+
+    console.log("Storage: Found responses", responses.length);
+
+    // Delete garden items that reference these responses first
+    for (const response of responses) {
+      console.log("Storage: Deleting garden items for response", response.id);
+      await db
+        .delete(gardenItems)
+        .where(eq(gardenItems.helpResponseId, response.id));
+    }
+
+    console.log("Storage: Garden items deleted, deleting responses...");
+
+    // Delete associated responses
+    await db
+      .delete(helpResponses)
+      .where(eq(helpResponses.helpRequestId, id));
+
+    console.log("Storage: Responses deleted, deleting help request...");
+
+    // Delete the help request
+    await db
+      .delete(helpRequests)
+      .where(eq(helpRequests.id, id));
+
+    console.log("Storage: Help request deleted successfully");
   }
 
   // Help response operations
   async createHelpResponse(response: InsertHelpResponse): Promise<HelpResponse> {
     const [newResponse] = await db
       .insert(helpResponses)
-      .values(response)
+      .values({ 
+        id: nanoid(), 
+        ...response
+      })
       .returning();
+
+    // Award XP for providing a helpful response
+    await this.addXP(response.userId, XP_REWARDS.PROVIDE_HELPFUL_RESPONSE, 'Provided helpful response');
+
+    // Get the help request to determine seed type based on category
+    const [helpRequest] = await db
+      .select({
+        categoryId: helpRequests.categoryId,
+        category: categories,
+      })
+      .from(helpRequests)
+      .leftJoin(categories, eq(helpRequests.categoryId, categories.id))
+      .where(eq(helpRequests.id, response.helpRequestId));
+
+    // Determine seed type based on category
+    let seedType = 'healing-seed'; // default
+    if (helpRequest?.category?.name) {
+      switch (helpRequest.category.name) {
+        case 'Mental Health Support':
+          seedType = 'healing-seed';
+          break;
+        case 'Study Help':
+          seedType = 'knowledge-seed';
+          break;
+        case 'Career Advice':
+          seedType = 'success-seed';
+          break;
+        case 'Life Skills':
+          seedType = 'wisdom-seed';
+          break;
+        case 'Creative Feedback':
+          seedType = 'inspiration-seed';
+          break;
+        case 'Tech Support':
+          seedType = 'innovation-seed';
+          break;
+      }
+    }
 
     // Create a seed in the helper's garden
     await this.createGardenItem({
       userId: response.userId,
       helpResponseId: newResponse.id,
-      type: 'seed',
+      type: seedType,
       growth: 0,
     });
 
@@ -211,23 +356,89 @@ export class DatabaseStorage implements IStorage {
       .set({ isMarkedHelpful: true })
       .where(eq(helpResponses.id, responseId));
 
-    // Grow the associated garden item
-    const [gardenItem] = await db
+    // Get the response to award XP to the helper
+    const [response] = await db
       .select()
-      .from(gardenItems)
-      .where(eq(gardenItems.helpResponseId, responseId));
+      .from(helpResponses)
+      .where(eq(helpResponses.id, responseId));
 
-    if (gardenItem) {
-      await this.updateGardenItem(gardenItem.id, {
-        growth: Math.min(gardenItem.growth + 25, 100),
-        type: gardenItem.growth >= 75 ? 'plant' : 'sprout',
-        isGrown: gardenItem.growth >= 75,
-      });
+    if (response) {
+      // Award XP for having response marked as helpful
+      await this.addXP(response.userId, XP_REWARDS.RESPONSE_MARKED_HELPFUL, 'Response marked as helpful');
+      
+      // Update total help provided count
+      await db
+        .update(users)
+        .set({ 
+          totalHelpProvided: sql`${users.totalHelpProvided} + 1`,
+          updatedAt: new Date().toISOString()
+        })
+        .where(eq(users.id, response.userId));
+
+      // Get the help request to determine the category
+      const [helpRequest] = await db
+        .select({
+          categoryId: helpRequests.categoryId,
+          categoryName: categories.name
+        })
+        .from(helpRequests)
+        .leftJoin(categories, eq(helpRequests.categoryId, categories.id))
+        .where(eq(helpRequests.id, helpRequestId));
+
+      // Find and grow the existing garden item for this response
+      const [gardenItem] = await db
+        .select()
+        .from(gardenItems)
+        .where(eq(gardenItems.helpResponseId, responseId));
+
+      if (gardenItem && gardenItem.growth !== null) {
+        const currentGrowth = gardenItem.growth || 0;
+        const newGrowth = Math.min(currentGrowth + 50, 100); // More growth when marked helpful
+        
+        let newType = gardenItem.type;
+        if (newGrowth >= 100) {
+          newType = 'flower';
+        } else if (newGrowth >= 75) {
+          newType = 'plant';
+        } else if (newGrowth >= 25) {
+          newType = 'sprout';
+        }
+
+        await this.updateGardenItem(gardenItem.id, {
+          growth: newGrowth,
+          type: newType,
+          isGrown: newGrowth >= 100,
+        });
+      }
     }
   }
 
   // Garden operations
   async getUserGarden(userId: string): Promise<GardenItem[]> {
+    const items = await db
+      .select()
+      .from(gardenItems)
+      .where(eq(gardenItems.userId, userId))
+      .orderBy(desc(gardenItems.createdAt));
+
+    // Auto-grow seeds based on time passed
+    const now = new Date();
+    for (const item of items) {
+      if (item.type.includes('seed') && item.growth < 25) {
+        const createdAt = new Date(item.createdAt);
+        const hoursPassed = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+        
+        // Seeds grow to 25% after 24 hours
+        if (hoursPassed >= 24 && item.growth < 25) {
+          await this.updateGardenItem(item.id, {
+            growth: 25,
+            type: 'sprout',
+          });
+        }
+      }
+    }
+
+    // Return updated garden items
     return await db
       .select()
       .from(gardenItems)
@@ -238,7 +449,10 @@ export class DatabaseStorage implements IStorage {
   async createGardenItem(item: InsertGardenItem): Promise<GardenItem> {
     const [newItem] = await db
       .insert(gardenItems)
-      .values(item)
+      .values({ 
+        id: nanoid(), 
+        ...item
+      })
       .returning();
     return newItem;
   }
@@ -246,7 +460,7 @@ export class DatabaseStorage implements IStorage {
   async updateGardenItem(id: string, updates: Partial<InsertGardenItem>): Promise<GardenItem> {
     const [updated] = await db
       .update(gardenItems)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({ ...updates, updatedAt: new Date().toISOString() })
       .where(eq(gardenItems.id, id))
       .returning();
     return updated;
@@ -275,6 +489,53 @@ export class DatabaseStorage implements IStorage {
       activeGardeners: activeGardeners.count,
       seedsPlanted: seedsPlanted.count,
       gardensBloomin: gardensBloomin.count,
+    };
+  }
+
+  // XP and Leveling operations
+  async addXP(userId: string, xpAmount: number, reason: string): Promise<{ newXP: number; newLevel: number; leveledUp: boolean }> {
+    // Get current user data
+    const user = await this.getUser(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const currentXP = user.xp || 0;
+    const currentLevel = user.level || 1;
+    const newXP = currentXP + xpAmount;
+    
+    // Calculate new level
+    const levelInfo = calculateLevelInfo(newXP);
+    const newLevel = levelInfo.level;
+    const leveledUp = newLevel > currentLevel;
+
+    // Update user with new XP and level
+    await db
+      .update(users)
+      .set({ 
+        xp: newXP,
+        level: newLevel,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(users.id, userId));
+
+    // Log XP gain
+    console.log(`🎯 User ${userId} gained ${xpAmount} XP (${reason}). New total: ${newXP} XP, Level ${newLevel}${leveledUp ? ' (LEVELED UP!)' : ''}`);
+
+    return { newXP, newLevel, leveledUp };
+  }
+
+  async getUserStats(userId: string): Promise<{ xp: number; level: number; totalHelpProvided: number; totalHelpReceived: number }> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return {
+      xp: user.xp || 0,
+      level: user.level || 1,
+      totalHelpProvided: user.totalHelpProvided || 0,
+      totalHelpReceived: user.totalHelpReceived || 0,
     };
   }
 }

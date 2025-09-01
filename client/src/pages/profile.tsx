@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GardenVisualization } from "@/components/garden-visualization";
+import { MatureSeedsButton } from "@/components/mature-seeds-button";
+import { UserProfile } from "@/components/user-profile";
 import { Link } from "wouter";
+import { Logo } from "@/components/ui/logo";
 
 export default function Profile() {
   const { toast } = useToast();
@@ -20,7 +23,7 @@ export default function Profile() {
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
+        window.location.href = "/auth";
       }, 500);
       return;
     }
@@ -39,29 +42,31 @@ export default function Profile() {
     );
   }
 
-  const userInitials = user?.firstName && user?.lastName 
-    ? `${user.firstName[0]}${user.lastName[0]}`
-    : user?.email?.[0]?.toUpperCase() || "U";
+  const getUserDisplayName = (user: any) => {
+    // Use first letter of first name and last name
+    if (user.firstName && user.lastName) {
+      return `${user.firstName[0]}${user.lastName[0]}`;
+    }
+    // Fallback to first letter of email if no name
+    return user.email?.[0]?.toUpperCase() || 'A';
+  };
+
+  const userInitials = (user: any) => {
+    return getUserDisplayName(user);
+  };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-                <path d="M12 18v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M10 10c0-1 1-2 2-2s2 1 2 2" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M9 11c1-1 2-1 3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <path d="M15 11c-1-1-2-1-3 0" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              </svg>
-            </div>
+          <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity duration-200">
+            <Logo size="md" showText={false} />
             <div>
               <h1 className="text-2xl font-bold text-white" data-testid="app-title">EchoGarden</h1>
               <p className="text-white/80 text-sm">Your Digital Garden</p>
             </div>
-          </div>
+          </Link>
           <Link href="/">
             <Button variant="ghost" className="text-white hover:bg-white/10" data-testid="link-home">
               🏠 Home
@@ -73,20 +78,17 @@ export default function Profile() {
       <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Profile Info */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <Card className="card-shadow">
               <CardHeader className="text-center">
                 <Avatar className="w-24 h-24 mx-auto mb-4">
-                  <AvatarImage src={user?.profileImageUrl} alt="Profile" />
+                  <AvatarImage src={user?.profileImageUrl || undefined} alt="Profile" />
                   <AvatarFallback className="text-2xl gradient-purple-orange text-white">
-                    {userInitials}
+                    {userInitials(user)}
                   </AvatarFallback>
                 </Avatar>
                 <CardTitle className="text-2xl" data-testid="text-username">
-                  {user?.firstName && user?.lastName 
-                    ? `${user.firstName} ${user.lastName}`
-                    : user?.email?.split('@')[0] || 'Gardener'
-                  }
+                  {getUserDisplayName(user)}
                 </CardTitle>
                 <p className="text-muted-foreground" data-testid="text-user-email">
                   {user?.email}
@@ -98,8 +100,14 @@ export default function Profile() {
                     Member since {new Date(user?.createdAt || Date.now()).toLocaleDateString()}
                   </p>
                 </div>
+                <div className="text-center">
+                  <MatureSeedsButton />
+                </div>
               </CardContent>
             </Card>
+
+            {/* User Level and XP */}
+            <UserProfile />
           </div>
 
           {/* Garden Visualization */}

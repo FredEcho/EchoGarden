@@ -1,0 +1,482 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoGarden - Grow Kindness Together</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["var(--font-sans)"],
+                }
+            },
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --background: hsl(220 15% 97%);
+            --foreground: hsl(220 15% 15%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(220 15% 15%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(220 15% 15%);
+            --primary: hsl(270 95% 70%);
+            --primary-foreground: hsl(0 0% 100%);
+            --secondary: hsl(220 15% 90%);
+            --secondary-foreground: hsl(220 15% 25%);
+            --muted: hsl(220 15% 92%);
+            --muted-foreground: hsl(220 15% 45%);
+            --accent: hsl(140 60% 50%);
+            --accent-foreground: hsl(0 0% 100%);
+            --destructive: hsl(0 85% 60%);
+            --destructive-foreground: hsl(0 0% 100%);
+            --border: hsl(220 15% 88%);
+            --input: hsl(220 15% 88%);
+            --ring: hsl(270 95% 70%);
+            --radius: 12px;
+            --font-sans: 'Inter', system-ui, sans-serif;
+        }
+        
+        .gradient-purple-orange {
+            background: linear-gradient(135deg, hsl(270 95% 70%) 0%, hsl(330 85% 65%) 50%, hsl(25 95% 60%) 100%);
+        }
+        
+        .gradient-cyan-blue {
+            background: linear-gradient(135deg, hsl(190 95% 65%) 0%, hsl(250 85% 70%) 100%);
+        }
+        
+        .gradient-text-purple-orange {
+            background: linear-gradient(135deg, hsl(270 95% 70%) 0%, hsl(330 85% 65%) 50%, hsl(25 95% 60%) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-text-cyan-blue {
+            background: linear-gradient(135deg, hsl(190 95% 65%) 0%, hsl(250 85% 70%) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-grow {
+            animation: pulse-grow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-grow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body class="bg-background font-sans">
+    <!-- @COMPONENT: Header [navigation with logo and join button] -->
+    <header class="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <i class="fas fa-seedling text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white">EchoGarden</h1>
+                    <p class="text-white/80 text-sm">Grow kindness together</p>
+                </div>
+            </div>
+            <button class="bg-white text-primary px-6 py-2 rounded-full font-semibold hover:bg-white/90 transition-colors">
+                Join Garden
+            </button>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- @COMPONENT: Hero Section [main value proposition with plant icon] -->
+    <section class="gradient-cyan-blue px-4 py-16 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="w-20 h-20 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-8 floating-animation">
+                <i class="fas fa-seedling text-white text-2xl"></i>
+            </div>
+            
+            <h2 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                Plant Seeds of Kindness
+                <span class="block"><i class="fas fa-leaf text-red-400"></i></span>
+            </h2>
+            
+            <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Join the social platform where helping others grows your digital garden through community impact
+            </p>
+            
+            <button class="gradient-purple-orange text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-transform shadow-lg">
+                Start Growing Today
+            </button>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Hero Section -->
+
+    <!-- @COMPONENT: Stats Section [community metrics display] -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- @MAP: statsData.map(stat => ( -->
+                <div class="bg-card rounded-2xl p-8 text-center card-shadow hover-lift" data-mock="true">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-green-600" data-bind="stat.value">2.5K+</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-foreground mb-2" data-bind="stat.label">Seeds Planted</h3>
+                    <p class="text-sm text-muted-foreground" data-bind="stat.description">Community impact</p>
+                </div>
+                
+                <div class="bg-card rounded-2xl p-8 text-center card-shadow hover-lift" data-mock="true">
+                    <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-orange-600" data-bind="stat.value">1.8K+</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-foreground mb-2" data-bind="stat.label">Plants Grown</h3>
+                    <p class="text-sm text-muted-foreground" data-bind="stat.description">Community growth</p>
+                </div>
+                
+                <div class="bg-card rounded-2xl p-8 text-center card-shadow hover-lift" data-mock="true">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold text-blue-600" data-bind="stat.value">850+</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-foreground mb-2" data-bind="stat.label">Gardeners</h3>
+                    <p class="text-sm text-muted-foreground" data-bind="stat.description">Active helpers</p>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Stats Section -->
+
+    <!-- @COMPONENT: Categories Section [help categories display] -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div class="max-w-6xl mx-auto text-center">
+            <h3 class="text-3xl font-bold gradient-text-purple-orange mb-12">Ways to Help & Grow</h3>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-16">
+                <!-- @MAP: categories.map(category => ( -->
+                <span class="bg-green-500 text-white px-6 py-3 rounded-full font-medium hover:bg-green-600 transition-colors cursor-pointer" data-mock="true">
+                    Mental Health Support
+                </span>
+                <span class="bg-blue-500 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-600 transition-colors cursor-pointer" data-mock="true">
+                    Study Help
+                </span>
+                <span class="bg-purple-500 text-white px-6 py-3 rounded-full font-medium hover:bg-purple-600 transition-colors cursor-pointer" data-mock="true">
+                    Career Advice
+                </span>
+                <span class="bg-orange-500 text-white px-6 py-3 rounded-full font-medium hover:bg-orange-600 transition-colors cursor-pointer" data-mock="true">
+                    Life Skills
+                </span>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Categories Section -->
+
+    <!-- @COMPONENT: Stories Section [real user help requests] -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <h3 class="text-3xl font-bold gradient-text-purple-orange text-center mb-4">Real Stories from Our Garden</h3>
+            <p class="text-center text-muted-foreground mb-12">See how our community helps each other grow</p>
+            
+            <div class="space-y-6">
+                <!-- @MAP: stories.map(story => ( -->
+                <div class="bg-card rounded-2xl p-6 card-shadow hover-lift" data-mock="true">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 gradient-purple-orange rounded-full flex items-center justify-center text-white font-bold">
+                            <span data-bind="story.userInitials">SC</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="font-semibold text-foreground" data-bind="story.userName">S. C.</span>
+                                <span class="text-sm text-muted-foreground" data-bind="story.timestamp">2 hours ago</span>
+                            </div>
+                            
+                            <div class="flex space-x-2 mb-3">
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium" data-bind="story.category">Study Help</span>
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium" data-bind="story.subject">Math</span>
+                            </div>
+                            
+                            <h4 class="font-semibold text-foreground mb-2" data-bind="story.title">Need help understanding calculus derivatives</h4>
+                            <p class="text-muted-foreground mb-4" data-bind="story.content">
+                                I'm struggling with the chain rule in calculus and have an exam next week. Would really appreciate if someone could walk me through some practice problems!
+                            </p>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <span class="flex items-center text-sm text-muted-foreground">
+                                        <i class="fas fa-seedling text-green-500 mr-1"></i>
+                                        <span data-bind="story.helpingCount">7 helping</span>
+                                    </span>
+                                    <span class="text-sm text-muted-foreground" data-bind="story.viewCount">24 views</span>
+                                </div>
+                                <button class="bg-green-500 text-white px-4 py-2 rounded-full font-medium hover:bg-green-600 transition-colors" data-event="click:offerHelp">
+                                    Offer Help
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-2xl p-6 card-shadow hover-lift" data-mock="true">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 gradient-cyan-blue rounded-full flex items-center justify-center text-white font-bold">
+                            <span data-bind="story.userInitials">MK</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="font-semibold text-foreground" data-bind="story.userName">M. K.</span>
+                                <span class="text-sm text-muted-foreground" data-bind="story.timestamp">5 hours ago</span>
+                            </div>
+                            
+                            <div class="flex space-x-2 mb-3">
+                                <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-medium" data-bind="story.category">Career Advice</span>
+                                <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-medium" data-bind="story.subject">Interview</span>
+                            </div>
+                            
+                            <h4 class="font-semibold text-foreground mb-2" data-bind="story.title">First job interview tips needed</h4>
+                            <p class="text-muted-foreground mb-4" data-bind="story.content">
+                                I have my first ever job interview next week for a marketing role. Feeling nervous and would love some tips from anyone who's been through this!
+                            </p>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <span class="flex items-center text-sm text-muted-foreground">
+                                        <i class="fas fa-seedling text-green-500 mr-1"></i>
+                                        <span data-bind="story.helpingCount">12 helping</span>
+                                    </span>
+                                    <span class="text-sm text-muted-foreground" data-bind="story.viewCount">48 views</span>
+                                </div>
+                                <button class="bg-green-500 text-white px-4 py-2 rounded-full font-medium hover:bg-green-600 transition-colors" data-event="click:offerHelp">
+                                    Offer Help
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Stories Section -->
+
+    <!-- @COMPONENT: How It Works Section [explanation of the platform] -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div class="max-w-6xl mx-auto">
+            <h3 class="text-3xl font-bold gradient-text-cyan-blue text-center mb-16">How EchoGarden Works</h3>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- @MAP: steps.map(step => ( -->
+                <div class="bg-card rounded-2xl p-8 text-center card-shadow hover-lift" data-mock="true">
+                    <div class="w-16 h-16 gradient-purple-orange rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-heart text-white text-xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-foreground mb-4" data-bind="step.title">Share Your Echoes</h4>
+                    <p class="text-muted-foreground" data-bind="step.description">
+                        Post requests for help, advice, or support. Tag your needs so the right helpers can find you.
+                    </p>
+                </div>
+                
+                <div class="bg-card rounded-2xl p-8 text-center card-shadow hover-lift" data-mock="true">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-seedling text-white text-xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-foreground mb-4" data-bind="step.title">Plant Seeds by Helping</h4>
+                    <p class="text-muted-foreground" data-bind="step.description">
+                        Offer help to others and plant seeds in your garden. Each helpful act creates a growing seed.
+                    </p>
+                </div>
+                
+                <div class="bg-card rounded-2xl p-8 text-center card-shadow hover-lift" data-mock="true">
+                    <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-leaf text-white text-xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-foreground mb-4" data-bind="step.title">Watch Your Garden Bloom</h4>
+                    <p class="text-muted-foreground" data-bind="step.description">
+                        Seeds grow as your impact spreads through the community. Build a beautiful garden of kindness.
+                    </p>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: How It Works Section -->
+
+    <!-- @COMPONENT: Community Stats [growing together metrics] -->
+    <section class="gradient-purple-orange py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h3 class="text-4xl font-bold text-white mb-4">Growing Together</h3>
+            <p class="text-xl text-white/90 mb-12">Join thousands making a difference</p>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- @MAP: communityStats.map(stat => ( -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 card-shadow hover-lift" data-mock="true">
+                    <div class="text-4xl font-bold text-white mb-2" data-bind="stat.value">1,247</div>
+                    <div class="text-lg font-semibold text-white mb-1" data-bind="stat.label">Active Gardeners</div>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 card-shadow hover-lift" data-mock="true">
+                    <div class="text-4xl font-bold text-white mb-2" data-bind="stat.value">8,923</div>
+                    <div class="text-lg font-semibold text-white mb-1" data-bind="stat.label">Seeds Planted</div>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 card-shadow hover-lift" data-mock="true">
+                    <div class="text-4xl font-bold text-white mb-2" data-bind="stat.value">3,456</div>
+                    <div class="text-lg font-semibold text-white mb-1" data-bind="stat.label">Gardens Blooming</div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Community Stats -->
+
+    <!-- @COMPONENT: CTA Section [final call to action] -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="w-20 h-20 gradient-cyan-blue rounded-full flex items-center justify-center mx-auto mb-8 pulse-grow">
+                <i class="fas fa-rainbow text-white text-2xl"></i>
+            </div>
+            
+            <h3 class="text-4xl font-bold gradient-text-purple-orange mb-6">
+                Ready to Start Your Garden?
+                <span class="block text-2xl mt-2"><i class="fas fa-rainbow gradient-text-cyan-blue"></i></span>
+            </h3>
+            
+            <p class="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Join a community where helping others helps you grow. Every act of kindness makes the world a little brighter.
+            </p>
+            
+            <button class="gradient-purple-orange text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-transform shadow-lg flex items-center space-x-2 mx-auto" data-event="click:joinCommunity">
+                <i class="fas fa-user-plus"></i>
+                <span>Join EchoGarden Today</span>
+            </button>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: CTA Section -->
+
+    <!-- @COMPONENT: Footer [branding and links] -->
+    <footer class="bg-green-600 px-4 py-12 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-seedling text-white text-xl"></i>
+                </div>
+                <h4 class="text-2xl font-bold text-white">EchoGarden</h4>
+            </div>
+            
+            <p class="text-white/80 mb-8 max-w-md mx-auto">
+                © 2024 EchoGarden. All rights reserved. Made with <i class="fas fa-heart text-green-300"></i> for growing communities.
+            </p>
+            
+            <div class="flex justify-center space-x-6">
+                <a href="#" class="text-white/70 hover:text-white transition-colors" data-mock="true">Privacy</a>
+                <a href="#" class="text-white/70 hover:text-white transition-colors" data-mock="true">Terms</a>
+                <a href="#" class="text-white/70 hover:text-white transition-colors" data-mock="true">Support</a>
+                <a href="#" class="text-white/70 hover:text-white transition-colors" data-mock="true">Community</a>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (() => {
+            // Simple hover effects and interactions
+            const buttons = document.querySelectorAll('button');
+            const cards = document.querySelectorAll('.hover-lift');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    // TODO: Implement actual button functionality
+                    console.log('Button clicked:', e.target.textContent);
+                });
+            });
+            
+            // Category filter simulation
+            const categoryTags = document.querySelectorAll('[data-mock="true"] span');
+            categoryTags.forEach(tag => {
+                tag.addEventListener('click', (e) => {
+                    // TODO: Implement category filtering
+                    console.log('Category selected:', e.target.textContent);
+                });
+            });
+            
+            // Help offer simulation
+            const offerButtons = document.querySelectorAll('[data-event="click:offerHelp"]');
+            offerButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    // TODO: Implement help offering functionality
+                    e.preventDefault();
+                    console.log('Offering help...');
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

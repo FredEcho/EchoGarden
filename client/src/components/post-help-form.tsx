@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCategories } from "@/hooks/useCategories";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { SproutIcon } from "@/components/ui/logo";
 
 interface PostHelpFormProps {
   onSuccess?: () => void;
@@ -24,23 +26,24 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: categories = [] } = useQuery({
-    queryKey: ["/api/categories"],
-  });
+  const { categories } = useCategories();
 
   const submitMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("POST", "/api/help-requests", {
-        title,
-        description,
+      const requestData = {
+        title: title.trim(),
+        description: description.trim(),
         categoryId,
-        tags,
-      });
+        tags: tags.length > 0 ? tags.join(',') : null,
+      };
+      
+      console.log("Submitting echo:", requestData);
+      await apiRequest("POST", "/api/help-requests", requestData);
     },
     onSuccess: () => {
       toast({
-        title: "Help Request Posted!",
-        description: "Your request has been shared with the community.",
+        title: "Echo Posted! 🌱",
+        description: "Your echo has been shared with the community and will help others grow.",
       });
       
       // Reset form
@@ -52,10 +55,13 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
       
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/help-requests"] });
+      queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] === "/api/help-requests" });
       
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      console.error("Echo submission error:", error);
+      
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
@@ -63,15 +69,26 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = "/auth";
         }, 500);
         return;
       }
-      toast({
-        title: "Error",
-        description: "Failed to post your request. Please try again.",
-        variant: "destructive",
-      });
+      
+      // Show specific validation errors if available
+      if (error.response?.data?.errors) {
+        const errorMessages = error.response.data.errors.map((err: any) => err.message).join(', ');
+        toast({
+          title: "Validation Error",
+          description: errorMessages,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.response?.data?.message || "Failed to post your echo. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -89,8 +106,8 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
   const handleSubmit = () => {
     if (!title.trim()) {
       toast({
-        title: "Missing Title",
-        description: "Please provide a title for your request.",
+        title: "Missing Echo Title",
+        description: "Please provide a title for your echo.",
         variant: "destructive",
       });
       return;
@@ -98,8 +115,8 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
     
     if (!description.trim()) {
       toast({
-        title: "Missing Description",
-        description: "Please describe what help you need.",
+        title: "Missing Echo Description",
+        description: "Please describe what you need help with.",
         variant: "destructive",
       });
       return;
@@ -108,7 +125,7 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
     if (!categoryId) {
       toast({
         title: "Missing Category",
-        description: "Please select a category for your request.",
+        description: "Please select a category for your echo.",
         variant: "destructive",
       });
       return;
@@ -121,15 +138,15 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
-          <span>📢</span>
-          <span>Ask for Help</span>
+          <SproutIcon color="purple" />
+          <span>Share Your Echo</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <label className="text-sm font-medium mb-2 block">What do you need help with?</label>
+          <label className="text-sm font-medium mb-2 block">What's your echo about?</label>
           <Input
-            placeholder="e.g., Understanding calculus derivatives"
+            placeholder="e.g., Need help understanding calculus derivatives"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             data-testid="input-title"
@@ -153,9 +170,9 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block">Description</label>
+          <label className="text-sm font-medium mb-2 block">Tell us more about your echo</label>
           <Textarea
-            placeholder="Describe your situation and what kind of help you're looking for..."
+            placeholder="Share your story, what you're struggling with, and how the community can help you grow..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="min-h-[120px]"
@@ -164,10 +181,10 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block">Tags (optional)</label>
+          <label className="text-sm font-medium mb-2 block">Tags to help others find your echo (optional)</label>
           <div className="flex space-x-2 mb-2">
             <Input
-              placeholder="Add relevant tags"
+              placeholder="e.g., math, study-help, beginner"
               value={currentTag}
               onChange={(e) => setCurrentTag(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
@@ -204,7 +221,7 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
             className="gradient-purple-orange text-white"
             data-testid="button-submit"
           >
-            {submitMutation.isPending ? "Posting..." : "Post Request 🌱"}
+            {submitMutation.isPending ? "Sharing Echo..." : "Share Echo 🌱"}
           </Button>
         </div>
       </CardContent>

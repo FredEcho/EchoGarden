@@ -98,67 +98,98 @@ export default {
           800: "hsl(250, 85%, 40%)",
         },
       },
-      fontFamily: {
-        sans: ["var(--font-sans)"],
-        serif: ["var(--font-serif)"],
-        mono: ["var(--font-mono)"],
-      },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
-        float: {
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "fade-out": {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        "slide-in-from-top": {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
+        "slide-in-from-bottom": {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
+        "slide-in-from-left": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-in-from-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "floating": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "gradient-x": {
           "0%, 100%": {
-            transform: "translateY(0px)",
+            "background-size": "200% 200%",
+            "background-position": "left center",
           },
           "50%": {
-            transform: "translateY(-10px)",
+            "background-size": "200% 200%",
+            "background-position": "right center",
           },
         },
-        "pulse-grow": {
+        "gradient-y": {
           "0%, 100%": {
-            transform: "scale(1)",
+            "background-size": "200% 200%",
+            "background-position": "center top",
           },
           "50%": {
-            transform: "scale(1.05)",
+            "background-size": "200% 200%",
+            "background-position": "center bottom",
           },
         },
-        "garden-grow": {
-          "0%": {
-            transform: "scale(0) rotate(0deg)",
-            opacity: "0",
+        "gradient-xy": {
+          "0%, 100%": {
+            "background-size": "400% 400%",
+            "background-position": "left center",
           },
           "50%": {
-            transform: "scale(1.2) rotate(180deg)",
-            opacity: "0.8",
-          },
-          "100%": {
-            transform: "scale(1) rotate(360deg)",
-            opacity: "1",
+            "background-size": "200% 200%",
+            "background-position": "right center",
           },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        float: "float 3s ease-in-out infinite",
-        "pulse-grow": "pulse-grow 2s ease-in-out infinite",
-        "garden-grow": "garden-grow 0.8s ease-out",
+        "fade-in": "fade-in 0.5s ease-out",
+        "fade-out": "fade-out 0.5s ease-out",
+        "slide-in-from-top": "slide-in-from-top 0.3s ease-out",
+        "slide-in-from-bottom": "slide-in-from-bottom 0.3s ease-out",
+        "slide-in-from-left": "slide-in-from-left 0.3s ease-out",
+        "slide-in-from-right": "slide-in-from-right 0.3s ease-out",
+        "floating": "floating 3s ease-in-out infinite",
+        "gradient-x": "gradient-x 15s ease infinite",
+        "gradient-y": "gradient-y 15s ease infinite",
+        "gradient-xy": "gradient-xy 15s ease infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [require("tailwindcss-animate")],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
 } satisfies Config;
+
+
+
+
+
+
