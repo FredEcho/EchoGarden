@@ -309,8 +309,8 @@ export function GardenVisualization({ userId, compact = false }: GardenVisualiza
           </div>
         )}
       </CardHeader>
-      <CardContent>
-        <div className={`grid ${compact ? 'grid-cols-4 gap-2' : 'grid-cols-6 gap-4'} items-start`}>
+      <CardContent className={compact ? "px-6 py-3" : "px-8 py-4"}>
+        <div className={`grid ${compact ? 'grid-cols-4 gap-x-6 gap-y-2' : 'grid-cols-6 gap-x-8 gap-y-3'} items-start`}>
           {gardenItems.slice(0, compact ? 8 : 24).map((item, index) => {
             const design = getPlantDesign(item.type, item.growth || 0);
             const name = getSeedTypeName(item.type, item.growth || 0);

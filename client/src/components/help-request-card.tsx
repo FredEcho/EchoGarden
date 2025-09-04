@@ -165,60 +165,87 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
   const isAuthor = user?.id === request.userId;
 
   return (
-    <Card className="card-shadow hover-lift" data-testid={`help-request-${request.id}`}>
+    <Card className="bg-white/80 backdrop-blur-sm border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]" data-testid={`help-request-${request.id}`}>
       <CardContent className="p-6">
         <div className="flex items-start space-x-4">
-          <Avatar className="w-12 h-12">
-            <AvatarImage src={request.user?.profileImageUrl} alt="User avatar" />
-            <AvatarFallback className="gradient-purple-orange text-white">
-              {userInitials(request.user)}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="w-14 h-14 ring-2 ring-white/50 shadow-lg">
+              <AvatarImage src={request.user?.profileImageUrl} alt="User avatar" />
+              <AvatarFallback className="gradient-purple-orange text-white font-semibold">
+                {userInitials(request.user)}
+              </AvatarFallback>
+            </Avatar>
+            {/* Online indicator */}
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+          </div>
           
-          <div className="flex-1">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="font-semibold text-foreground" data-testid="text-username">
-                {getUserDisplayName(request.user)}
-              </span>
-              <span className="text-sm text-muted-foreground" data-testid="text-timestamp">
-                {timeAgo(request.createdAt)}
-              </span>
+          <div className="flex-1 min-w-0">
+            {/* Header with user info and timestamp */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-3">
+                <span className="font-semibold text-foreground text-lg" data-testid="text-username">
+                  {getUserDisplayName(request.user)}
+                </span>
+                <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                  <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
+                  <span data-testid="text-timestamp">
+                    {timeAgo(request.createdAt)}
+                  </span>
+                </div>
+              </div>
+              {isAuthor && (
+                <div className="flex items-center space-x-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                  <span>Your Echo</span>
+                </div>
+              )}
             </div>
             
-            <div className="flex flex-wrap gap-2 mb-3">
-              <Badge className={getCategoryColor(request.category?.name)} data-testid="badge-category">
+            {/* Category and tags */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Badge className={`${getCategoryColor(request.category?.name)} shadow-sm`} data-testid="badge-category">
                 {request.category?.name}
               </Badge>
               {request.tags?.map((tag: string) => (
-                <Badge key={tag} variant="outline" data-testid={`badge-tag-${tag}`}>
-                  {tag}
+                <Badge key={tag} variant="outline" className="bg-white/50 border-white/30 text-muted-foreground" data-testid={`badge-tag-${tag}`}>
+                  #{tag}
                 </Badge>
               ))}
             </div>
             
-            <h4 className="font-semibold text-foreground mb-2" data-testid="text-title">
-              {request.title}
-            </h4>
-            <p className="text-muted-foreground mb-4" data-testid="text-description">
-              {request.description}
-            </p>
+            {/* Title and description */}
+            <div className="mb-4">
+              <h4 className="font-bold text-foreground text-lg mb-2 leading-tight" data-testid="text-title">
+                {request.title}
+              </h4>
+              <p className="text-muted-foreground leading-relaxed" data-testid="text-description">
+                {request.description}
+              </p>
+            </div>
             
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="flex items-center text-sm text-muted-foreground">
-                  <span className="text-green-500 mr-1">🌱</span>
-                  <span data-testid="text-response-count">{request.responseCount} helping</span>
-                </span>
-                <span className="text-sm text-muted-foreground" data-testid="text-view-count">
-                  {request.viewCount} views
-                </span>
+            {/* Stats and actions */}
+            <div className="flex items-center justify-between pt-4 border-t border-white/30">
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <span className="flex items-center space-x-1">
+                    <span className="text-green-500">🌱</span>
+                    <span data-testid="text-response-count">{request.responseCount}</span>
+                    <span>helping</span>
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <span className="flex items-center space-x-1">
+                    <span className="text-blue-500">👁️</span>
+                    <span data-testid="text-view-count">{request.viewCount}</span>
+                    <span>views</span>
+                  </span>
+                </div>
                 {isAuthor && (
                   <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50/50 transition-colors"
                         onClick={handleDelete}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -246,36 +273,37 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
                 )}
               </div>
               
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowComments(!showComments)}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground hover:bg-white/50 transition-all"
                 >
-                  <MessageCircle className="w-4 h-4 mr-1" />
+                  <MessageCircle className="w-4 h-4 mr-2" />
                   {showComments ? (
                     <>
                       Hide Comments
-                      <ChevronUp className="w-4 h-4 ml-1" />
+                      <ChevronUp className="w-4 h-4 ml-2" />
                     </>
                   ) : (
                     <>
                       Show Comments
-                      <ChevronDown className="w-4 h-4 ml-1" />
+                      <ChevronDown className="w-4 h-4 ml-2" />
                     </>
                   )}
                 </Button>
                 
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button 
-                      className="bg-green-500 text-white hover:bg-green-600"
-                      data-testid="button-offer-help"
-                    >
-                      Offer Help
-                    </Button>
-                  </DialogTrigger>
+                {!isAuthor && (
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                        data-testid="button-offer-help"
+                      >
+                        🌱 Offer Help
+                      </Button>
+                    </DialogTrigger>
                   <DialogContent>
                                       <DialogHeader>
                     <DialogTitle>Offer Help to {getUserDisplayName(request.user)}</DialogTitle>
@@ -312,6 +340,7 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
                     </div>
                   </DialogContent>
                 </Dialog>
+                )}
               </div>
             </div>
             

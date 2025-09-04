@@ -421,7 +421,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Community stats
-  app.get('/api/stats', async (req, res) => {
+  app.get('/api/community-stats', async (req, res) => {
     try {
       const stats = await storage.getCommunityStats();
       res.json(stats);

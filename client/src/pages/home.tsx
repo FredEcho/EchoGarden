@@ -124,58 +124,96 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-8">
-            {/* Quick Actions */}
-            <div className="flex flex-wrap gap-4">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="gradient-purple-orange text-white" data-testid="button-post-help">
-                    🌱 Share Your Echo
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] overflow-y-auto">
-                  <PostHelpForm onSuccess={() => {
-                    refetchHelpRequests();
-                    setIsDialogOpen(false);
-                  }} />
-                </DialogContent>
-              </Dialog>
+          <div className="lg:col-span-3">
+            {/* Action Bar */}
+            <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/20 shadow-lg">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center space-x-4">
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="gradient-purple-orange text-white shadow-lg hover:shadow-xl transition-all duration-200" data-testid="button-post-help">
+                        🌱 Share Your Echo
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] overflow-y-auto">
+                      <PostHelpForm onSuccess={() => {
+                        refetchHelpRequests();
+                        setIsDialogOpen(false);
+                      }} />
+                    </DialogContent>
+                  </Dialog>
+                  <div className="text-sm text-muted-foreground">
+                    Share your thoughts and help others grow
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span>Live Community</span>
+                </div>
+              </div>
             </div>
 
             {/* Category Filter */}
-            <CategoryFilter 
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-            />
+            <div className="mb-8">
+              <CategoryFilter 
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleCategoryChange}
+              />
+            </div>
 
             {/* Echoes Feed */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold gradient-text-purple-orange" data-testid="text-help-requests-title">
-                  Recent Echoes
-                </h2>
-                <span className="text-sm text-muted-foreground" data-testid="text-requests-count">
-                  {helpRequests.length} echoes
-                </span>
+            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <h2 className="text-2xl font-bold gradient-text-purple-orange" data-testid="text-help-requests-title">
+                    Community Echoes
+                  </h2>
+                  <div className="px-3 py-1 bg-white/50 rounded-full text-sm font-medium text-muted-foreground" data-testid="text-requests-count">
+                    {helpRequests.length} echoes
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Latest conversations
+                </div>
               </div>
 
               {helpRequests.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">🌱</span>
+                <div className="text-center py-16">
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <span className="text-3xl">🌱</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">No echoes found</h3>
-                  <p className="text-muted-foreground">Be the first to share your echo or try changing the filter!</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-3">No echoes found</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    Be the first to share your echo and help others grow, or try changing the filter to see more conversations!
+                  </p>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="gradient-purple-orange text-white" data-testid="button-post-help-empty">
+                        🌱 Start the Conversation
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] overflow-y-auto">
+                      <PostHelpForm onSuccess={() => {
+                        refetchHelpRequests();
+                        setIsDialogOpen(false);
+                      }} />
+                    </DialogContent>
+                  </Dialog>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {helpRequests.map((request: any) => (
-                    <HelpRequestCard 
-                      key={request.id} 
-                      request={request}
-                      onResponse={() => refetchHelpRequests()}
-                      onDelete={() => refetchHelpRequests()}
-                    />
+                <div className="space-y-6">
+                  {helpRequests.map((request: any, index: number) => (
+                    <div key={request.id} className="relative">
+                      {/* Connection line for visual flow */}
+                      {index < helpRequests.length - 1 && (
+                        <div className="absolute left-6 top-16 w-0.5 h-6 bg-gradient-to-b from-purple-200 to-orange-200 opacity-50"></div>
+                      )}
+                      <HelpRequestCard 
+                        request={request}
+                        onResponse={() => refetchHelpRequests()}
+                        onDelete={() => refetchHelpRequests()}
+                      />
+                    </div>
                   ))}
                 </div>
               )}
@@ -185,10 +223,14 @@ export default function Home() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* User's Garden Preview */}
-            <GardenVisualization userId={user?.id} compact />
+            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+              <GardenVisualization userId={user?.id} compact />
+            </div>
 
             {/* Community Stats */}
-            <CommunityStats compact />
+            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+              <CommunityStats compact />
+            </div>
           </div>
         </div>
       </div>

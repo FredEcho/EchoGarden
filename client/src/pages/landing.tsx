@@ -166,7 +166,7 @@ export default function Landing() {
           </div>
           
           <p className="text-white/80 mb-8 max-w-md mx-auto">
-            © 2024 EchoGarden. All rights reserved. Made with ❤️ for growing communities.
+            © 2025 EchoGarden. All rights reserved. Made with ❤️ for growing communities.
           </p>
           
           <div className="flex justify-center space-x-6">

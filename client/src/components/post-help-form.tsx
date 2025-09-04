@@ -185,13 +185,6 @@ export function PostHelpForm({ onSuccess }: PostHelpFormProps) {
               ))}
             </select>
           )}
-          {/* Debug info */}
-          <div className="text-xs text-gray-400 mt-1">
-            Debug: {categories.length} categories loaded, selected: {categoryId || 'none'}
-          </div>
-          <div className="text-xs text-gray-400 mt-1">
-            Categories data: {JSON.stringify(categories.slice(0, 2))}
-          </div>
         </div>
 
         <div>
