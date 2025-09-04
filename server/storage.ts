@@ -239,12 +239,22 @@ export class DatabaseStorage implements IStorage {
       
       console.log('✅ Help request created successfully:', newRequest.id);
       
-      // Award XP for posting
+      // Award XP for posting and update help received stats
       try {
         await this.addXP(request.userId, XP_REWARDS.POST_HELP_REQUEST, 'Posted help request');
-        console.log('🎯 XP awarded for help request');
+        
+        // Update help received count
+        await db
+          .update(users)
+          .set({ 
+            totalHelpReceived: sql`${users.totalHelpReceived} + 1`,
+            updatedAt: now
+          })
+          .where(eq(users.id, request.userId));
+        
+        console.log('🎯 XP awarded and help received stats updated');
       } catch (xpError) {
-        console.error('⚠️ Failed to award XP:', xpError);
+        console.error('⚠️ Failed to award XP or update stats:', xpError);
         // Don't fail the request creation if XP fails
       }
       
@@ -336,8 +346,17 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
 
-    // Award XP for providing a helpful response
+    // Award XP for providing a helpful response and update help provided stats
     await this.addXP(response.userId, XP_REWARDS.PROVIDE_HELPFUL_RESPONSE, 'Provided helpful response');
+    
+    // Update help provided count
+    await db
+      .update(users)
+      .set({ 
+        totalHelpProvided: sql`${users.totalHelpProvided} + 1`,
+        updatedAt: now
+      })
+      .where(eq(users.id, response.userId));
 
     // Get the help request to determine seed type based on category
     const [helpRequest] = await db
@@ -419,22 +438,6 @@ export class DatabaseStorage implements IStorage {
     if (response) {
       // Award XP for having response marked as helpful
       await this.addXP(response.userId, XP_REWARDS.RESPONSE_MARKED_HELPFUL, 'Response marked as helpful');
-      
-      // Update total help provided count
-      const [currentUser] = await db
-        .select({ totalHelpProvided: users.totalHelpProvided })
-        .from(users)
-        .where(eq(users.id, response.userId));
-      
-      if (currentUser) {
-        await db
-          .update(users)
-          .set({ 
-            totalHelpProvided: (currentUser.totalHelpProvided || 0) + 1,
-            updatedAt: new Date().toISOString()
-          })
-          .where(eq(users.id, response.userId));
-      }
 
       // Get the help request to determine the category
       const [helpRequest] = await db

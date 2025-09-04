@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { CommentSection } from "./comment-section";
+import { useTimeAgo } from "@/hooks/useTimeAgo";
 import { MessageCircle, ChevronDown, ChevronUp, Trash2, MoreVertical } from "lucide-react";
 
 interface HelpRequestCardProps {
@@ -28,6 +29,7 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
   const { toast } = useToast();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const timeAgo = useTimeAgo(request.createdAt);
 
   const getUserDisplayName = (user: any) => {
     // Use first letter of first name and last name
@@ -42,16 +44,6 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
     return getUserDisplayName(user);
   };
 
-  const timeAgo = (date: string) => {
-    const now = new Date();
-    const posted = new Date(date);
-    const diffInHours = Math.floor((now.getTime() - posted.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return "Just now";
-    if (diffInHours < 24) return `${diffInHours} hours ago`;
-    const diffInDays = Math.floor(diffInHours / 24);
-    return `${diffInDays} days ago`;
-  };
 
   const getCategoryColor = (categoryName: string) => {
     const colors: { [key: string]: string } = {
@@ -188,8 +180,8 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
                 </span>
                 <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                   <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
-                  <span data-testid="text-timestamp">
-                    {timeAgo(request.createdAt)}
+                  <span data-testid="text-timestamp" className="animate-pulse">
+                    {timeAgo}
                   </span>
                 </div>
               </div>
@@ -230,13 +222,6 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
                     <span className="text-green-500">🌱</span>
                     <span data-testid="text-response-count">{request.responseCount}</span>
                     <span>helping</span>
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <span className="flex items-center space-x-1">
-                    <span className="text-blue-500">👁️</span>
-                    <span data-testid="text-view-count">{request.viewCount}</span>
-                    <span>views</span>
                   </span>
                 </div>
                 {isAuthor && (
@@ -298,7 +283,7 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button 
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                        className="btn-success button-pop button-ripple text-white shadow-lg"
                         data-testid="button-offer-help"
                       >
                         🌱 Offer Help
@@ -324,6 +309,7 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
                         <Button 
                           variant="outline" 
                           onClick={() => setIsDialogOpen(false)}
+                          className="btn-outline button-pop"
                           data-testid="button-cancel"
                         >
                           Cancel
@@ -331,7 +317,7 @@ export function HelpRequestCard({ request, onResponse, onDelete }: HelpRequestCa
                         <Button 
                           onClick={handleSubmitResponse}
                           disabled={submitResponseMutation.isPending}
-                          className="bg-green-500 hover:bg-green-600"
+                          className="btn-success button-pop button-ripple"
                           data-testid="button-submit-response"
                         >
                           {submitResponseMutation.isPending ? "Sending..." : "Send Help 🌱"}

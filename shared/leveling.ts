@@ -58,7 +58,7 @@ export function calculateLevelInfo(xp: number): LevelInfo {
   let level = 1;
   let xpRequired = 0;
   
-  // Find current level
+  // Find current level by checking which level threshold the XP meets
   for (let i = 0; i < XP_PER_LEVEL.length; i++) {
     if (xp >= XP_PER_LEVEL[i]) {
       level = i + 1;
@@ -68,17 +68,27 @@ export function calculateLevelInfo(xp: number): LevelInfo {
     }
   }
   
+  // If we're at max level, return 100% progress
+  if (level >= XP_PER_LEVEL.length) {
+    return {
+      level: XP_PER_LEVEL.length,
+      xpRequired: XP_PER_LEVEL[XP_PER_LEVEL.length - 1],
+      xpForNextLevel: XP_PER_LEVEL[XP_PER_LEVEL.length - 1],
+      progress: 100
+    };
+  }
+  
   // Calculate XP needed for next level
-  const xpForNextLevel = XP_PER_LEVEL[level] || XP_PER_LEVEL[XP_PER_LEVEL.length - 1];
-  const xpInCurrentLevel = xp - xpRequired;
-  const xpNeededForNextLevel = xpForNextLevel - xpRequired;
-  const progress = xpNeededForNextLevel > 0 ? (xpInCurrentLevel / xpNeededForNextLevel) * 100 : 100;
+  const xpForNextLevel = XP_PER_LEVEL[level]; // XP needed for the next level
+  const xpInCurrentLevel = xp - xpRequired; // XP earned in current level
+  const xpNeededForNextLevel = xpForNextLevel - xpRequired; // Total XP needed to reach next level
+  const progress = xpNeededForNextLevel > 0 ? (xpInCurrentLevel / xpNeededForNextLevel) * 100 : 0;
   
   return {
     level,
     xpRequired,
     xpForNextLevel,
-    progress: Math.min(progress, 100)
+    progress: Math.min(Math.max(progress, 0), 100)
   };
 }
 

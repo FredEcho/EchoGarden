@@ -22,7 +22,7 @@ export default function Landing() {
           </Link>
           <Button 
             onClick={handleJoinGarden}
-            className="bg-white text-primary hover:bg-white/90"
+            className="btn-primary button-pop button-ripple bg-white text-primary"
             data-testid="button-join-garden"
           >
             Join Garden

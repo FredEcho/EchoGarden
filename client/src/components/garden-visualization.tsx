@@ -243,7 +243,7 @@ export function GardenVisualization({ userId, compact = false }: GardenVisualiza
   }
 
   const stats = {
-    seeds: gardenItems.filter(item => item.type === 'seed').length,
+    seeds: gardenItems.filter(item => (item.growth || 0) === 0).length,
     growing: gardenItems.filter(item => (item.growth || 0) > 0 && (item.growth || 0) < 100).length,
     mature: gardenItems.filter(item => item.isGrown).length,
   };
@@ -265,26 +265,10 @@ export function GardenVisualization({ userId, compact = false }: GardenVisualiza
               }}
               variant="outline"
               size="sm"
-              className="text-xs"
+              className="btn-warning button-pop text-xs"
               data-testid="reset-garden-button"
             >
               🌱 Reset to Seeds ({gardenItems.length})
-            </Button>
-          )}
-          {!compact && (
-            <Button
-              onClick={() => {
-                console.log('Test button clicked!');
-                toast({
-                  title: "Test",
-                  description: "Button is working!",
-                });
-              }}
-              variant="secondary"
-              size="sm"
-              className="text-xs ml-2"
-            >
-              🧪 Test
             </Button>
           )}
         </div>

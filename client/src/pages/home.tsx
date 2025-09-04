@@ -104,14 +104,14 @@ export default function Home() {
                 className=""
               />
               <Link href="/profile">
-                <Button variant="ghost" className="text-white hover:bg-white/10" data-testid="link-profile">
+                <Button variant="ghost" className="btn-ghost button-pop text-white" data-testid="link-profile">
                   🌿 My Garden
                 </Button>
               </Link>
               <Button 
                 onClick={handleLogout}
                 variant="ghost"
-                className="text-white hover:bg-white/10"
+                className="btn-ghost button-pop text-white"
                 data-testid="button-logout"
               >
                 Logout
@@ -126,12 +126,12 @@ export default function Home() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Action Bar */}
-            <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/20 shadow-lg">
+            <div className="glass-card rounded-2xl p-6 mb-8 shadow-lg">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center space-x-4">
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="gradient-purple-orange text-white shadow-lg hover:shadow-xl transition-all duration-200" data-testid="button-post-help">
+                      <Button className="btn-primary button-pop button-ripple text-white shadow-lg" data-testid="button-post-help">
                         🌱 Share Your Echo
                       </Button>
                     </DialogTrigger>
@@ -162,7 +162,7 @@ export default function Home() {
             </div>
 
             {/* Echoes Feed */}
-            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+            <div className="glass-card rounded-2xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
                   <h2 className="text-2xl font-bold gradient-text-purple-orange" data-testid="text-help-requests-title">
@@ -188,7 +188,7 @@ export default function Home() {
                   </p>
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="gradient-purple-orange text-white" data-testid="button-post-help-empty">
+                      <Button className="btn-primary button-pop button-ripple text-white" data-testid="button-post-help-empty">
                         🌱 Start the Conversation
                       </Button>
                     </DialogTrigger>
@@ -223,12 +223,12 @@ export default function Home() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* User's Garden Preview */}
-            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+            <div className="glass-card rounded-2xl p-6 shadow-lg">
               <GardenVisualization userId={user?.id} compact />
             </div>
 
             {/* Community Stats */}
-            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+            <div className="glass-card rounded-2xl p-6 shadow-lg">
               <CommunityStats compact />
             </div>
           </div>
