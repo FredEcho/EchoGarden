@@ -433,6 +433,259 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Serve community feature plan
+  app.get('/api/community-plan', async (req, res) => {
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      
+      const planPath = path.join(process.cwd(), 'COMMUNITY_FEATURE_PLAN.md');
+      const content = fs.readFileSync(planPath, 'utf8');
+      
+      // Create HTML page with markdown rendering
+      const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoGarden Community Feature Plan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        h2 {
+            color: #764ba2;
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            color: #5a67d8;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.8rem 0;
+        }
+        
+        h4 {
+            color: #4c51bf;
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.6rem 0;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        code {
+            background: #f7fafc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #e53e3e;
+        }
+        
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #4a5568;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .back-button {
+                position: relative;
+                top: auto;
+                right: auto;
+                display: inline-block;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-button">← Back to EchoGarden</a>
+    <div class="container">
+        <div id="content"></div>
+    </div>
+    
+    <script>
+        // Simple markdown to HTML converter
+        function markdownToHtml(markdown) {
+            return markdown
+                // Headers
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                // Bold
+                .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
+                // Italic
+                .replace(/\\*(.*?)\\*/g, '<em>$1</em>')
+                // Code blocks
+                .replace(/```([\\s\\S]*?)```/g, '<pre><code>$1</code></pre>')
+                // Inline code
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                // Lists
+                .replace(/^\\* (.*$)/gim, '<li>$1</li>')
+                .replace(/^\\- (.*$)/gim, '<li>$1</li>')
+                .replace(/^\\+ (.*$)/gim, '<li>$1</li>')
+                // Line breaks
+                .replace(/\\n\\n/g, '</p><p>')
+                .replace(/\\n/g, '<br>')
+                // Wrap in paragraphs
+                .replace(/^(?!<[h|l|p|d])/gm, '<p>')
+                .replace(/(?<!>)$/gm, '</p>')
+                // Clean up empty paragraphs
+                .replace(/<p><\\/p>/g, '')
+                .replace(/<p><br><\\/p>/g, '')
+                // Wrap lists
+                .replace(/(<li>.*<\\/li>)/gs, '<ul>$1</ul>')
+                // Clean up nested lists
+                .replace(/<\\/ul>\\s*<ul>/g, '');
+        }
+        
+        // Render the content when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const markdownContent = \`${content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+            const contentDiv = document.getElementById('content');
+            if (contentDiv) {
+                contentDiv.innerHTML = markdownToHtml(markdownContent);
+            }
+        });
+    </script>
+</body>
+</html>`;
+      
+      res.setHeader('Content-Type', 'text/html');
+      res.send(html);
+    } catch (error) {
+      console.error("Error serving community plan:", error);
+      res.status(404).json({ message: "Community plan not found" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
