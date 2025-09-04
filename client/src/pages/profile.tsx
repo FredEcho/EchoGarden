@@ -56,7 +56,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen animated-bg particles-bg">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="gradient-purple-orange px-4 py-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">

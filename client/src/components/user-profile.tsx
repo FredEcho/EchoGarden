@@ -38,7 +38,7 @@ export function UserProfile({ userId, showDetails = true }: UserProfileProps) {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full card-shadow">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <span className={levelInfo.color}>{levelInfo.emoji}</span>

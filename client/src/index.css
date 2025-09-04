@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(220, 15%, 97%);
+  --background: linear-gradient(135deg, hsl(220, 15%, 98%) 0%, hsl(240, 20%, 95%) 50%, hsl(260, 15%, 97%) 100%);
   --foreground: hsl(220, 15%, 15%);
   --card: hsl(0, 0%, 100%);
   --card-foreground: hsl(220, 15%, 15%);
@@ -53,7 +53,12 @@
 }
 
 .dark {
-  --background: hsl(0, 0%, 0%);
+  --background: linear-gradient(-45deg, 
+    hsl(270, 95%, 70%, 0.15) 0%, 
+    hsl(0, 0%, 2%) 25%, 
+    hsl(240, 20%, 5%) 50%, 
+    hsl(300, 85%, 65%, 0.1) 75%, 
+    hsl(260, 15%, 3%) 100%);
   --foreground: hsl(200, 6.6667%, 91.1765%);
   --card: hsl(228, 9.8039%, 10%);
   --card-foreground: hsl(0, 0%, 85.0980%);
@@ -175,6 +180,106 @@
 /* Custom gradient classes */
 .gradient-purple-orange {
   background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f97316 100%);
+}
+
+/* Enhanced animated background with colors */
+body {
+  background: linear-gradient(-45deg, 
+    hsl(270, 95%, 70%, 0.1) 0%, 
+    hsl(240, 20%, 95%) 25%, 
+    hsl(260, 15%, 97%) 50%, 
+    hsl(300, 85%, 65%, 0.1) 75%, 
+    hsl(220, 15%, 98%) 100%);
+  background-size: 400% 400%;
+  background-attachment: fixed;
+  position: relative;
+  animation: gradient-flow 15s ease infinite;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    /* Main color orbs */
+    radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(249, 115, 22, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 60% 40%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+    /* Side fillers */
+    radial-gradient(circle at 5% 30%, rgba(139, 92, 246, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 95% 70%, rgba(236, 72, 153, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 10% 80%, rgba(249, 115, 22, 0.02) 0%, transparent 35%),
+    radial-gradient(circle at 90% 20%, rgba(16, 185, 129, 0.02) 0%, transparent 35%),
+    radial-gradient(circle at 0% 50%, rgba(59, 130, 246, 0.02) 0%, transparent 30%),
+    radial-gradient(circle at 100% 50%, rgba(139, 92, 246, 0.02) 0%, transparent 30%),
+    /* Corner accents */
+    radial-gradient(circle at 0% 0%, rgba(236, 72, 153, 0.03) 0%, transparent 25%),
+    radial-gradient(circle at 100% 0%, rgba(249, 115, 22, 0.03) 0%, transparent 25%),
+    radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.03) 0%, transparent 25%),
+    radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.03) 0%, transparent 25%);
+  pointer-events: none;
+  z-index: -1;
+  animation: color-dance 20s ease-in-out infinite;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, transparent 30%, rgba(139, 92, 246, 0.02) 50%, transparent 70%),
+    linear-gradient(-45deg, transparent 30%, rgba(236, 72, 153, 0.02) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+  animation: shimmer-move 25s linear infinite;
+}
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes color-dance {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    opacity: 0.8;
+    transform: scale(1.1) rotate(1deg);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(0.95) rotate(-1deg);
+  }
+  75% {
+    opacity: 0.85;
+    transform: scale(1.05) rotate(0.5deg);
+  }
+}
+
+@keyframes shimmer-move {
+  0% {
+    transform: translateX(-100%) translateY(-100%);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%);
+  }
 }
 
 /* Animated background effects */
