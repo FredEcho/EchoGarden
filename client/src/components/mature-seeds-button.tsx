@@ -2,14 +2,29 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { isDevAccount } from "@/lib/devUtils";
 import { Sparkles } from "lucide-react";
 
 export function MatureSeedsButton() {
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Check if user is a DEV account
+  const isDev = isDevAccount(user?.email || undefined);
+
   const handleMatureSeeds = async () => {
+    if (!isDev) {
+      toast({
+        title: "Access Denied",
+        description: "This feature is only available for development accounts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await fetch("/api/garden/mature-all", {
@@ -18,7 +33,8 @@ export function MatureSeedsButton() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to mature seeds");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to mature seeds");
       }
 
       const result = await response.json();
@@ -34,13 +50,18 @@ export function MatureSeedsButton() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to mature seeds. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to mature seeds. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Only render the button for DEV accounts
+  if (!isDev) {
+    return null;
+  }
 
   return (
     <Button

@@ -3,6 +3,7 @@ import session from "express-session";
 import type { Express, RequestHandler } from "express";
 import connectPg from "connect-pg-simple";
 import bcrypt from "bcryptjs";
+import { nanoid } from "nanoid";
 import { storage } from "./storage";
 import { db } from "./db";
 import { users } from "@shared/schema";
@@ -25,7 +26,7 @@ export function getSession() {
         createTableIfMissing: true,
       });
     } catch (error) {
-      console.warn('PostgreSQL session store not available, using memory store:', error.message);
+      console.warn('PostgreSQL session store not available, using memory store:', (error as Error).message);
     }
   }
   
@@ -124,6 +125,7 @@ export async function setupAuth(app: Express) {
       console.log("Creating user...");
       // Create user
       const newUser = await storage.upsertUser({
+        id: nanoid(),
         email,
         firstName,
         lastName,
@@ -143,8 +145,8 @@ export async function setupAuth(app: Express) {
       });
     } catch (error) {
       console.error("Registration error:", error);
-      console.error("Error stack:", error.stack);
-      res.status(500).json({ message: "Registration failed", error: error.message });
+      console.error("Error stack:", (error as Error).stack);
+      res.status(500).json({ message: "Registration failed", error: (error as Error).message });
     }
   });
 
@@ -173,7 +175,7 @@ export async function setupAuth(app: Express) {
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
   if (req.isAuthenticated() && req.user) {
     // Ensure req.user has the necessary properties
-    if (!req.user.id) {
+    if (!(req.user as any).id) {
       console.error("User object missing ID:", req.user);
       return res.status(401).json({ message: "Invalid user session" });
     }

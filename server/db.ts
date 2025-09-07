@@ -120,7 +120,14 @@ CREATE TABLE IF NOT EXISTS pay_it_forward (
 
   db = drizzle(sqlite, { schema });
   
-  // Create default user if no users exist
+  // Initialize default user asynchronously
+  initializeDefaultUser();
+  
+  pool = undefined;
+}
+
+// Create default user if no users exist
+async function initializeDefaultUser() {
   try {
     const existingUsers = await db.select().from(schema.users);
     
@@ -152,8 +159,6 @@ CREATE TABLE IF NOT EXISTS pay_it_forward (
       console.error('Default user creation error:', e);
     }
   }
-  
-  pool = undefined;
 }
 
 export { db, pool };

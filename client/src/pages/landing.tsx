@@ -174,6 +174,7 @@ export default function Landing() {
           </p>
           
           <div className="flex justify-center space-x-6">
+            <Link href="/cookies" className="text-white/70 hover:text-white transition-colors">Cookie Settings</Link>
             <a href="#" className="text-white/70 hover:text-white transition-colors">Privacy</a>
             <a href="#" className="text-white/70 hover:text-white transition-colors">Terms</a>
             <a href="#" className="text-white/70 hover:text-white transition-colors">Support</a>

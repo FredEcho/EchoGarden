@@ -35,7 +35,9 @@ export const users = sqliteTable("users", {
   totalHelpReceived: integer("total_help_received").default(0), // Total help requests resolved
   createdAt: text("created_at"),
   updatedAt: text("updated_at"),
-});
+}, (table) => [
+  index("IDX_users_created_at").on(table.createdAt),
+]);
 
 // Help request categories
 export const categories = sqliteTable("categories", {
@@ -56,7 +58,12 @@ export const helpRequests = sqliteTable("help_requests", {
   isResolved: integer("is_resolved").default(0),
   createdAt: text("created_at"),
   updatedAt: text("updated_at"),
-});
+}, (table) => [
+  index("IDX_help_requests_created_at").on(table.createdAt),
+  index("IDX_help_requests_category_id").on(table.categoryId),
+  index("IDX_help_requests_user_id").on(table.userId),
+  index("IDX_help_requests_is_resolved").on(table.isResolved),
+]);
 
 // Help responses
 export const helpResponses = sqliteTable("help_responses", {
@@ -67,7 +74,12 @@ export const helpResponses = sqliteTable("help_responses", {
   isMarkedHelpful: integer("is_marked_helpful").default(0),
   helpfulCount: integer("helpful_count").default(0), // Count of helpful marks
   createdAt: text("created_at"),
-});
+}, (table) => [
+  index("IDX_help_responses_help_request_id").on(table.helpRequestId),
+  index("IDX_help_responses_user_id").on(table.userId),
+  index("IDX_help_responses_created_at").on(table.createdAt),
+  index("IDX_help_responses_is_marked_helpful").on(table.isMarkedHelpful),
+]);
 
 // Garden items (seeds, plants, etc.)
 export const gardenItems = sqliteTable("garden_items", {
@@ -79,7 +91,13 @@ export const gardenItems = sqliteTable("garden_items", {
   isGrown: integer("is_grown").default(0),
   createdAt: text("created_at"),
   updatedAt: text("updated_at"),
-});
+}, (table) => [
+  index("IDX_garden_items_user_id").on(table.userId),
+  index("IDX_garden_items_help_response_id").on(table.helpResponseId),
+  index("IDX_garden_items_created_at").on(table.createdAt),
+  index("IDX_garden_items_is_grown").on(table.isGrown),
+  index("IDX_garden_items_type").on(table.type),
+]);
 
 // Pay-it-forward tracking
 export const payItForward = sqliteTable("pay_it_forward", {
@@ -90,7 +108,13 @@ export const payItForward = sqliteTable("pay_it_forward", {
   forwardHelpRequestId: text("forward_help_request_id").references(() => helpRequests.id),
   isCompleted: integer("is_completed").default(0),
   createdAt: text("created_at"),
-});
+}, (table) => [
+  index("IDX_pay_it_forward_helper_id").on(table.helperId),
+  index("IDX_pay_it_forward_helped_user_id").on(table.helpedUserId),
+  index("IDX_pay_it_forward_original_help_request_id").on(table.originalHelpRequestId),
+  index("IDX_pay_it_forward_is_completed").on(table.isCompleted),
+  index("IDX_pay_it_forward_created_at").on(table.createdAt),
+]);
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({

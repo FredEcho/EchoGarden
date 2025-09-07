@@ -1,4 +1,6 @@
 import { useGardenItems } from "@/hooks/useGardenItems";
+import { useAuth } from "@/hooks/useAuth";
+import { isDevAccount } from "@/lib/devUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
@@ -13,9 +15,22 @@ interface GardenVisualizationProps {
 
 export function GardenVisualization({ userId, compact = false }: GardenVisualizationProps) {
   const { gardenItems, isLoading } = useGardenItems(userId);
+  const { user } = useAuth();
   const { toast } = useToast();
 
+  // Check if user is a DEV account
+  const isDev = isDevAccount(user?.email || undefined);
+
   const resetGardenToSeeds = async () => {
+    if (!isDev) {
+      toast({
+        title: "Access Denied",
+        description: "This feature is only available for development accounts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       console.log('🌱 Attempting to reset garden...');
       console.log('User ID:', userId);
@@ -42,22 +57,27 @@ export function GardenVisualization({ userId, compact = false }: GardenVisualiza
         // Refresh the page to show the updated garden
         window.location.reload();
       } else {
-        const errorText = await response.text();
-        console.error('Reset failed:', errorText);
-        throw new Error(`Failed to reset garden: ${response.status} ${errorText}`);
+        const errorData = await response.json();
+        console.error('Reset failed:', errorData);
+        throw new Error(errorData.message || `Failed to reset garden: ${response.status}`);
       }
     } catch (error) {
       console.error('Reset error:', error);
       toast({
         title: "Error",
-        description: `Failed to reset garden: ${error.message}`,
+        description: error instanceof Error ? error.message : "Failed to reset garden",
         variant: "destructive",
       });
     }
   };
 
   const getPlantDesign = (type: string, growth: number) => {
-    const designs = {
+    const designs: Record<string, {
+      seed: { emoji: string; color: string; textColor: string };
+      sprout: { emoji: string; color: string; textColor: string };
+      growing: { emoji: string; color: string; textColor: string };
+      grown: { emoji: string; color: string; textColor: string };
+    }> = {
       'healing-seed': {
         seed: { emoji: '🌱', color: 'bg-green-100 border-green-300', textColor: 'text-green-700' },
         sprout: { emoji: '🌿', color: 'bg-green-200 border-green-400', textColor: 'text-green-800' },
@@ -106,7 +126,12 @@ export function GardenVisualization({ userId, compact = false }: GardenVisualiza
 
   const getGrowthBarColor = (type: string, growth: number) => {
     // Define specific color mappings for each seed type and growth stage
-    const colorMappings = {
+    const colorMappings: Record<string, {
+      seed: string;
+      sprout: string;
+      growing: string;
+      grown: string;
+    }> = {
       'healing-seed': {
         seed: 'bg-green-500',
         sprout: 'bg-green-600',
@@ -154,7 +179,12 @@ export function GardenVisualization({ userId, compact = false }: GardenVisualiza
   };
 
   const getSeedTypeName = (type: string, growth: number = 0) => {
-    const names = {
+    const names: Record<string, {
+      seed: string;
+      sprout: string;
+      growing: string;
+      grown: string;
+    }> = {
       'healing-seed': {
         seed: 'Healing Seed',
         sprout: 'Compassion Sprout',
@@ -256,7 +286,7 @@ export function GardenVisualization({ userId, compact = false }: GardenVisualiza
             <span>🌿</span>
             <span data-testid="text-garden-title">Garden</span>
           </CardTitle>
-          {!compact && gardenItems.length > 0 && (
+          {!compact && gardenItems.length > 0 && isDev && (
             <Button
               onClick={() => {
                 console.log('Reset button clicked!');

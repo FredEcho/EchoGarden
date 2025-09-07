@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./localAuth";
 import { insertHelpRequestSchema, insertHelpResponseSchema, insertCategorySchema } from "@shared/schema";
+import { isDevAccount, logDevAccess } from "./devUtils";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -299,15 +300,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Temporary endpoint to mature all seeds for testing
+  // Temporary endpoint to mature all seeds for testing - DEV ACCOUNT ONLY
   app.post('/api/garden/mature-all', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.id;
+      const userEmail = req.user.email;
+      
+      // Restrict to DEV account only
+      if (!isDevAccount(userEmail)) {
+        console.log(`🚫 Mature plants access denied for: ${userEmail}`);
+        return res.status(403).json({ 
+          message: "Access denied. This feature is only available for development accounts." 
+        });
+      }
+      
+      logDevAccess(userEmail, 'mature-all-seeds');
       const garden = await storage.getUserGarden(userId);
       
       // Update all seeds to 100% growth
       for (const item of garden) {
-        if (item.growth < 100) {
+        if ((item.growth || 0) < 100) {
           await storage.updateGardenItem(item.id, {
             growth: 100,
             isGrown: 1,
@@ -329,11 +341,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Reset garden to seeds for testing
+  // Reset garden to seeds for testing - DEV ACCOUNT ONLY
   app.post('/api/garden/reset-to-seeds', isAuthenticated, async (req: any, res) => {
     try {
-      console.log('Reset endpoint called by user:', req.user.id);
       const userId = req.user.id;
+      const userEmail = req.user.email;
+      
+      // Restrict to DEV account only
+      if (!isDevAccount(userEmail)) {
+        console.log(`🚫 Reset garden access denied for: ${userEmail}`);
+        return res.status(403).json({ 
+          message: "Access denied. This feature is only available for development accounts." 
+        });
+      }
+      
+      logDevAccess(userEmail, 'reset-garden-to-seeds');
       const garden = await storage.getUserGarden(userId);
       
       console.log('Found garden items:', garden.length);
@@ -357,7 +379,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Error resetting garden:", error);
-      res.status(500).json({ message: "Failed to reset garden", error: error.message });
+      res.status(500).json({ message: "Failed to reset garden", error: (error as Error).message });
     }
   });
 
@@ -392,7 +414,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/health', async (req, res) => {
     try {
       // Basic health check
-      const health = {
+      const health: {
+        status: string;
+        timestamp: Date;
+        uptime: number;
+        environment: string;
+        version: string;
+        database?: string;
+      } = {
         status: 'healthy',
         timestamp: new Date(),
         uptime: process.uptime(),
@@ -415,7 +444,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(503).json({ 
         status: 'unhealthy',
         timestamp: new Date(),
-        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+        error: process.env.NODE_ENV === 'development' ? (error as Error).message : 'Internal server error'
       });
     }
   });
