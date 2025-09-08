@@ -2,6 +2,8 @@
 
 A community platform where users help each other and grow a virtual garden together.
 
+> **Live Demo:** [https://fredecho.github.io/EchoGarden/](https://fredecho.github.io/EchoGarden/)
+
 ## 🚀 Quick Start
 
 ```bash
