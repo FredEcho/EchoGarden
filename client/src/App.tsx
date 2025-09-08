@@ -10,11 +10,26 @@ import { CookieSettings } from "@/components/cookie-settings";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
+import StaticHome from "@/pages/static-home";
 import Profile from "@/pages/profile";
 import Auth from "@/pages/auth";
+import { isStaticMode } from "@/lib/staticData";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
+
+  // In static mode, show different routes
+  if (isStaticMode()) {
+    return (
+      <Switch>
+        <Route path="/auth" component={Auth} />
+        <Route path="/cookies" component={CookieSettings} />
+        <Route path="/demo" component={StaticHome} />
+        <Route path="/" component={Landing} />
+        <Route component={NotFound} />
+      </Switch>
+    );
+  }
 
   return (
     <Switch>

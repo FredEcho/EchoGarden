@@ -49,13 +49,22 @@ export default function Landing() {
             Join the social platform where helping others grows your digital garden through community impact
           </p>
           
-          <Button 
-            onClick={handleJoinGarden}
-            className="gradient-purple-orange text-white hover:scale-105 transition-transform shadow-lg text-lg px-8 py-4"
-            data-testid="button-start-growing"
-          >
-            Start Growing Today
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              onClick={handleJoinGarden}
+              className="gradient-purple-orange text-white hover:scale-105 transition-transform shadow-lg text-lg px-8 py-4"
+              data-testid="button-start-growing"
+            >
+              Start Growing Today
+            </Button>
+            <Button 
+              onClick={() => window.location.href = "/demo"}
+              variant="outline"
+              className="bg-white/20 text-white border-white/30 hover:bg-white/30 text-lg px-8 py-4"
+            >
+              Try Demo
+            </Button>
+          </div>
         </div>
       </section>
 

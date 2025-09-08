@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Logo } from "@/components/ui/logo";
 import { Link } from "wouter";
+import { isStaticMode } from "@/lib/staticData";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -92,6 +93,16 @@ export default function Auth() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // In static mode, show a message that the app is in demo mode
+    if (isStaticMode()) {
+      toast({
+        title: "Demo Mode",
+        description: "This is a static demo version. To use full features, please run the app locally with a backend server.",
+        variant: "default",
+      });
+      return;
+    }
     
     if (isLogin) {
       loginMutation.mutate();
