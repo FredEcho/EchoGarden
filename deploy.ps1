@@ -1,33 +1,6 @@
 # ===============================================
 #     ECHOGARDEN GITHUB UPLOAD SCRIPT
 # ===============================================
-# 
-# HOW TO USE THIS SCRIPT:
-# 1. Open PowerShell (not Command Prompt)
-# 2. Navigate to your project folder:
-#    cd "C:\Users\Frederic De Waege\Desktop\echogarden\echo code\echo unzip\EchoGarden"
-# 3. Run this script:
-#    powershell -ExecutionPolicy Bypass -File deploy.ps1
-#
-# ALTERNATIVE: Use the batch file instead:
-# 1. Open Command Prompt
-# 2. Navigate to your project folder
-# 3. Run: deploy.bat
-#
-# MANUAL COMMANDS (if scripts fail):
-# git checkout feature
-# git add .
-# git commit -m "Update EchoGarden project"
-# git push origin feature
-#
-# FINAL STEP: Configure GitHub Pages
-# 1. Go to: https://github.com/FredEcho/EchoGarden/settings/pages
-# 2. Set Source to "GitHub Actions"
-# 3. Click Save
-# 4. Wait 5-10 minutes for deployment
-# 5. Visit: https://fredecho.github.io/EchoGarden/
-#
-# ===============================================
 
 Write-Host "===============================================" -ForegroundColor Cyan
 Write-Host "     ECHOGARDEN GITHUB UPLOAD SCRIPT" -ForegroundColor Cyan
@@ -51,7 +24,8 @@ git add .
 
 # Step 4: Commit changes
 Write-Host "Step 4: Committing changes..." -ForegroundColor Yellow
-git commit -m "Update EchoGarden project"
+$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+git commit -m "Update EchoGarden project - $timestamp"
 
 # Step 5: Push to GitHub
 Write-Host "Step 5: Pushing to GitHub..." -ForegroundColor Yellow
