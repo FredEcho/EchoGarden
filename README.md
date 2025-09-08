@@ -1,4 +1,5 @@
-# EchoGarden 🌱
+# EchoGarden
+<!-- Deployment trigger --> 🌱
 
 A community platform where users help each other and grow a virtual garden together.
 

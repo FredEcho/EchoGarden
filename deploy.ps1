@@ -1,95 +1,73 @@
-# Simple and Reliable GitHub Upload Script
-Write-Host "Uploading EchoGarden to GitHub..." -ForegroundColor Green
+# ===============================================
+#     ECHOGARDEN GITHUB UPLOAD SCRIPT
+# ===============================================
+# 
+# HOW TO USE THIS SCRIPT:
+# 1. Open PowerShell (not Command Prompt)
+# 2. Navigate to your project folder:
+#    cd "C:\Users\Frederic De Waege\Desktop\echogarden\echo code\echo unzip\EchoGarden"
+# 3. Run this script:
+#    powershell -ExecutionPolicy Bypass -File deploy.ps1
+#
+# ALTERNATIVE: Use the batch file instead:
+# 1. Open Command Prompt
+# 2. Navigate to your project folder
+# 3. Run: deploy.bat
+#
+# MANUAL COMMANDS (if scripts fail):
+# git checkout feature
+# git add .
+# git commit -m "Update EchoGarden project"
+# git push origin feature
+#
+# FINAL STEP: Configure GitHub Pages
+# 1. Go to: https://github.com/FredEcho/EchoGarden/settings/pages
+# 2. Set Source to "GitHub Actions"
+# 3. Click Save
+# 4. Wait 5-10 minutes for deployment
+# 5. Visit: https://fredecho.github.io/EchoGarden/
+#
+# ===============================================
 
-# Check if git is available
-try {
-    git --version | Out-Null
-    Write-Host "Git is available" -ForegroundColor Green
-} catch {
-    Write-Host "Git is not installed or not in PATH!" -ForegroundColor Red
-    Write-Host "Please install Git from: https://git-scm.com/downloads" -ForegroundColor White
-    exit 1
-}
+Write-Host "===============================================" -ForegroundColor Cyan
+Write-Host "     ECHOGARDEN GITHUB UPLOAD SCRIPT" -ForegroundColor Cyan
+Write-Host "===============================================" -ForegroundColor Cyan
+Write-Host ""
 
-# Initialize git if needed
-if (-not (Test-Path ".git")) {
-    Write-Host "Initializing git repository..." -ForegroundColor Yellow
-    git init
-}
+Write-Host "Starting upload process..." -ForegroundColor Green
+Write-Host ""
 
-# Check for changes
-$gitStatus = git status --porcelain
-if (-not $gitStatus) {
-    Write-Host "No changes to commit" -ForegroundColor Blue
-    exit 0
-}
+# Step 1: Check if we're on feature branch
+Write-Host "Step 1: Checking branch..." -ForegroundColor Yellow
+git branch --show-current
 
-# Add all files
-Write-Host "Adding files..." -ForegroundColor Yellow
+# Step 2: Switch to feature branch
+Write-Host "Step 2: Switching to feature branch..." -ForegroundColor Yellow
+git checkout feature
+
+# Step 3: Add all files
+Write-Host "Step 3: Adding files..." -ForegroundColor Yellow
 git add .
 
-# Create commit
-$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-$commitMessage = "Update EchoGarden project - $timestamp"
-Write-Host "Creating commit..." -ForegroundColor Yellow
-git commit -m $commitMessage
+# Step 4: Commit changes
+Write-Host "Step 4: Committing changes..." -ForegroundColor Yellow
+git commit -m "Update EchoGarden project"
 
-# Check if commit was successful
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Commit failed!" -ForegroundColor Red
-    exit 1
-}
+# Step 5: Push to GitHub
+Write-Host "Step 5: Pushing to GitHub..." -ForegroundColor Yellow
+git push origin feature
 
-Write-Host "Commit created successfully" -ForegroundColor Green
-
-# Check remote
-$remoteUrl = git remote get-url origin 2>$null
-if (-not $remoteUrl) {
-    Write-Host "No remote origin configured!" -ForegroundColor Yellow
-    Write-Host "Current repository: https://github.com/FredEcho/EchoGarden.git" -ForegroundColor Cyan
-    git remote add origin https://github.com/FredEcho/EchoGarden.git
-}
-
-# Push to GitHub
-Write-Host "Pushing to GitHub..." -ForegroundColor Yellow
-
-# Try different push strategies
-$pushSuccess = $false
-
-# Strategy 1: Regular push
-Write-Host "Trying regular push..." -ForegroundColor Yellow
-git push origin main
-if ($LASTEXITCODE -eq 0) {
-    $pushSuccess = $true
-}
-
-# Strategy 2: Upstream push
-if (-not $pushSuccess) {
-    Write-Host "Trying upstream push..." -ForegroundColor Yellow
-    git push -u origin main
-    if ($LASTEXITCODE -eq 0) {
-        $pushSuccess = $true
-    }
-}
-
-# Strategy 3: Force push (if needed)
-if (-not $pushSuccess) {
-    Write-Host "Trying force push..." -ForegroundColor Yellow
-    git push -f origin main
-    if ($LASTEXITCODE -eq 0) {
-        $pushSuccess = $true
-    }
-}
-
-if ($pushSuccess) {
-    Write-Host "Successfully pushed to GitHub!" -ForegroundColor Green
-    Write-Host "Repository: https://github.com/FredEcho/EchoGarden" -ForegroundColor Cyan
-    Write-Host "Upload completed successfully!" -ForegroundColor Green
-} else {
-    Write-Host "Push failed!" -ForegroundColor Red
-    Write-Host "Troubleshooting:" -ForegroundColor Yellow
-    Write-Host "1. Check your internet connection" -ForegroundColor White
-    Write-Host "2. Verify GitHub credentials (use Personal Access Token)" -ForegroundColor White
-    Write-Host "3. Check repository permissions" -ForegroundColor White
-    Write-Host "4. Try manual: git push origin main" -ForegroundColor White
-}
+Write-Host ""
+Write-Host "===============================================" -ForegroundColor Cyan
+Write-Host "SUCCESS! Project uploaded to GitHub!" -ForegroundColor Green
+Write-Host "Repository: https://github.com/FredEcho/EchoGarden" -ForegroundColor Cyan
+Write-Host "===============================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "NEXT STEPS:" -ForegroundColor Yellow
+Write-Host "1. Go to: https://github.com/FredEcho/EchoGarden/settings/pages" -ForegroundColor White
+Write-Host "2. Set Source to 'GitHub Actions'" -ForegroundColor White
+Write-Host "3. Click Save" -ForegroundColor White
+Write-Host "4. Wait 5-10 minutes for deployment" -ForegroundColor White
+Write-Host "5. Visit: https://fredecho.github.io/EchoGarden/" -ForegroundColor White
+Write-Host ""
+Write-Host "Your website will be live in 5-10 minutes! 🎉" -ForegroundColor Green
