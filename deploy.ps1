@@ -1,50 +1,95 @@
-# GitHub Project Upload Instructions
-# Complete guide to upload a project to GitHub
+# Simple and Reliable GitHub Upload Script
+Write-Host "Uploading EchoGarden to GitHub..." -ForegroundColor Green
 
-Write-Host "📋 GitHub Project Upload Instructions" -ForegroundColor Cyan
-Write-Host "=====================================" -ForegroundColor Cyan
-Write-Host ""
+# Check if git is available
+try {
+    git --version | Out-Null
+    Write-Host "Git is available" -ForegroundColor Green
+} catch {
+    Write-Host "Git is not installed or not in PATH!" -ForegroundColor Red
+    Write-Host "Please install Git from: https://git-scm.com/downloads" -ForegroundColor White
+    exit 1
+}
 
-Write-Host "1. INITIAL SETUP (First time only):" -ForegroundColor Yellow
-Write-Host "   a) Create a new repository on GitHub.com" -ForegroundColor White
-Write-Host "   b) Copy the repository URL (e.g., https://github.com/username/project.git)" -ForegroundColor White
-Write-Host "   c) Initialize git in your project folder:" -ForegroundColor White
-Write-Host "      git init" -ForegroundColor Gray
-Write-Host "   d) Add the remote repository:" -ForegroundColor White
-Write-Host "      git remote add origin https://github.com/username/project.git" -ForegroundColor Gray
-Write-Host ""
+# Initialize git if needed
+if (-not (Test-Path ".git")) {
+    Write-Host "Initializing git repository..." -ForegroundColor Yellow
+    git init
+}
 
-Write-Host "2. UPLOAD YOUR PROJECT:" -ForegroundColor Yellow
-Write-Host "   a) Add all files to staging:" -ForegroundColor White
-Write-Host "      git add ." -ForegroundColor Gray
-Write-Host "   b) Create your first commit:" -ForegroundColor White
-Write-Host "      git commit -m 'Initial commit'" -ForegroundColor Gray
-Write-Host "   c) Push to GitHub:" -ForegroundColor White
-Write-Host "      git push -u origin main" -ForegroundColor Gray
-Write-Host ""
+# Check for changes
+$gitStatus = git status --porcelain
+if (-not $gitStatus) {
+    Write-Host "No changes to commit" -ForegroundColor Blue
+    exit 0
+}
 
-Write-Host "3. SUBSEQUENT UPDATES:" -ForegroundColor Yellow
-Write-Host "   a) Add changes:" -ForegroundColor White
-Write-Host "      git add ." -ForegroundColor Gray
-Write-Host "   b) Commit changes:" -ForegroundColor White
-Write-Host "      git commit -m 'Your commit message'" -ForegroundColor Gray
-Write-Host "   c) Push changes:" -ForegroundColor White
-Write-Host "      git push origin main" -ForegroundColor Gray
-Write-Host ""
+# Add all files
+Write-Host "Adding files..." -ForegroundColor Yellow
+git add .
 
-Write-Host "4. IMPORTANT NOTES:" -ForegroundColor Yellow
-Write-Host "   - Replace 'username/project' with your actual GitHub username and repository name" -ForegroundColor White
-Write-Host "   - Make sure you have Git installed on your system" -ForegroundColor White
-Write-Host "   - You may need to authenticate with GitHub (use Personal Access Token)" -ForegroundColor White
-Write-Host "   - If you get authentication errors, set up SSH keys or use GitHub CLI" -ForegroundColor White
-Write-Host ""
+# Create commit
+$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+$commitMessage = "Update EchoGarden project - $timestamp"
+Write-Host "Creating commit..." -ForegroundColor Yellow
+git commit -m $commitMessage
 
-Write-Host "5. ALTERNATIVE: Using GitHub CLI (if installed):" -ForegroundColor Yellow
-Write-Host "   gh repo create project-name --public" -ForegroundColor Gray
-Write-Host "   git remote add origin https://github.com/username/project-name.git" -ForegroundColor Gray
-Write-Host "   git add ." -ForegroundColor Gray
-Write-Host "   git commit -m 'Initial commit'" -ForegroundColor Gray
-Write-Host "   git push -u origin main" -ForegroundColor Gray
-Write-Host ""
+# Check if commit was successful
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Commit failed!" -ForegroundColor Red
+    exit 1
+}
 
-Write-Host "✅ Instructions complete! Follow these steps to upload your project to GitHub." -ForegroundColor Green
+Write-Host "Commit created successfully" -ForegroundColor Green
+
+# Check remote
+$remoteUrl = git remote get-url origin 2>$null
+if (-not $remoteUrl) {
+    Write-Host "No remote origin configured!" -ForegroundColor Yellow
+    Write-Host "Current repository: https://github.com/FredEcho/EchoGarden.git" -ForegroundColor Cyan
+    git remote add origin https://github.com/FredEcho/EchoGarden.git
+}
+
+# Push to GitHub
+Write-Host "Pushing to GitHub..." -ForegroundColor Yellow
+
+# Try different push strategies
+$pushSuccess = $false
+
+# Strategy 1: Regular push
+Write-Host "Trying regular push..." -ForegroundColor Yellow
+git push origin main
+if ($LASTEXITCODE -eq 0) {
+    $pushSuccess = $true
+}
+
+# Strategy 2: Upstream push
+if (-not $pushSuccess) {
+    Write-Host "Trying upstream push..." -ForegroundColor Yellow
+    git push -u origin main
+    if ($LASTEXITCODE -eq 0) {
+        $pushSuccess = $true
+    }
+}
+
+# Strategy 3: Force push (if needed)
+if (-not $pushSuccess) {
+    Write-Host "Trying force push..." -ForegroundColor Yellow
+    git push -f origin main
+    if ($LASTEXITCODE -eq 0) {
+        $pushSuccess = $true
+    }
+}
+
+if ($pushSuccess) {
+    Write-Host "Successfully pushed to GitHub!" -ForegroundColor Green
+    Write-Host "Repository: https://github.com/FredEcho/EchoGarden" -ForegroundColor Cyan
+    Write-Host "Upload completed successfully!" -ForegroundColor Green
+} else {
+    Write-Host "Push failed!" -ForegroundColor Red
+    Write-Host "Troubleshooting:" -ForegroundColor Yellow
+    Write-Host "1. Check your internet connection" -ForegroundColor White
+    Write-Host "2. Verify GitHub credentials (use Personal Access Token)" -ForegroundColor White
+    Write-Host "3. Check repository permissions" -ForegroundColor White
+    Write-Host "4. Try manual: git push origin main" -ForegroundColor White
+}
